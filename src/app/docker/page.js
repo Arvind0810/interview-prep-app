@@ -16,16 +16,16 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o onehub ./cmd/onehub
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o app ./cmd/app
 
 # Stage 2: runtime (tiny final image)
 FROM alpine:3.19
 RUN apk add --no-cache ca-certificates
 WORKDIR /app
-COPY --from=builder /app/onehub .
+COPY --from=builder /app/app .
 EXPOSE 8080
 USER nobody
-CMD ["./onehub"]`}</code></pre>
+CMD ["./app"]`}</code></pre>
       <p>Multi-stage cuts a 1GB Go build image down to ~15MB. The <code>-ldflags=&quot;-s -w&quot;</code> strips debug info.</p>
 
       <h2>Dockerfile Best Practices</h2>
@@ -60,7 +60,7 @@ CMD ["./onehub"]`}</code></pre>
     build: .
     ports: ["8080:8080"]
     environment:
-      DB_URL: postgres://app:app@db:5432/onehub
+      DB_URL: postgres://app:app@db:5432/app
       REDIS_URL: redis://cache:6379
     depends_on: [db, cache]
   db:

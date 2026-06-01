@@ -4,7 +4,7 @@ export default function NextjsPage() {
   return (
     <>
       <h1>Next.js &amp; React</h1>
-      <p>Your resume highlights Next.js and React. Even with backend focus, expect questions on rendering modes, App Router, and React fundamentals.</p>
+      <p>Your resume highlights Next.js and React. Expect questions on rendering modes, App Router, and React fundamentals.</p>
 
       <h2>Rendering Modes</h2>
       <table>

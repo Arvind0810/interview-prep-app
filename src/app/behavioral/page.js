@@ -31,7 +31,7 @@ export default function BehavioralPage() {
       <h1>Behavioral &amp; STAR Stories</h1>
       <p>Behavioral rounds are about pattern recognition: interviewers want to see judgment, ownership, collaboration, and growth. Use STAR — Situation, Task, Action, Result.</p>
       <p className="text-amber-300 text-sm bg-amber-900/20 border border-amber-700 rounded p-3 my-3">
-        <b>Framing note:</b> These stories are written as a <i>team contributor with feature-level ownership</i>. They focus on modules you actually own (Magazine, In-the-News V3, HR Conclave, Master Class, etc.) rather than claiming you architected the whole OneHub backend.
+        <b>Framing note:</b> These stories are written as a <i>team contributor with feature-level ownership</i>. They focus on modules you actually own (Magazine, In-the-News, HR Conclave, Master Class, etc.) rather than claiming you architected the whole 1Finance website platform.
       </p>
 
       <h2>Your STAR Stories (drawn from actual modules)</h2>
@@ -39,7 +39,7 @@ export default function BehavioralPage() {
       <h3>Story 1 — Owning a feature end-to-end (Magazine module)</h3>
       <STAR
         s={'"1Finance launched a print magazine that needed a public website registration flow plus an admin dashboard for the editorial team to export and filter registrations."'}
-        t={'"As a team contributor on OneHub, I was given full ownership of the Magazine module — both the public registration endpoint and the admin tooling."'}
+        t={'"As a team contributor on the 1Finance website team, I was given full ownership of the Magazine module — both the public registration endpoint and the admin tooling."'}
         a={'"Built the public POST /magazine/v1/magazine-website-register endpoint behind static-token auth so only our website could call it. Added admin endpoints for listing, filtering, and CSV export, each gated by our DB-backed JWT middleware with per-endpoint permission strings. When we realised early rows were stored as plaintext, I added a separate admin-gated encryption backfill endpoint that re-encrypted legacy data idempotently. Also added a static-token-protected daily filter endpoint so an internal cron could pull yesterday\'s registrations."'}
         r={'"Module shipped on schedule. Editorial uses the CSV export weekly. The encryption backfill ran once in production and migrated all legacy rows without downtime. The pattern of public+admin+internal auth tiers became a template I reused for HR Conclave."'}
       />

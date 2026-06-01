@@ -4,7 +4,7 @@ export default function GolangPage() {
   return (
     <>
       <h1>Golang &amp; GoFiber</h1>
-      <p>You&apos;ve built the OneHub backend in Go with GoFiber — interviewers will go deep here. Master the concurrency model, error handling idioms, and Fiber-specific patterns.</p>
+      <p>You&apos;ve built the 1Finance website platform in Go with GoFiber — interviewers will go deep here. Master the concurrency model, error handling idioms, and Fiber-specific patterns.</p>
 
       <h2>Core Language Concepts</h2>
       <h3>Goroutines &amp; Channels</h3>
@@ -103,7 +103,7 @@ case <-time.After(2 * time.Second):
         <p><code>golang.org/x/sync/errgroup</code> — like WaitGroup but cancels all if any goroutine errors. Perfect for &quot;fetch user, fetch orders, fetch profile&quot; in parallel.</p>
       </details>
 
-      <h2>Real Patterns from Your OneHub Code</h2>
+      <h2>Real Patterns from Your 1Finance Code</h2>
       <p>These are the actual idioms you use daily. Interviewers will love specifics — lean on these.</p>
 
       <h3>1. Router groups for module namespacing</h3>

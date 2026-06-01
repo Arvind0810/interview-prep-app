@@ -28,7 +28,7 @@ INSERT INTO ledger (txn_id, account, debit, credit) VALUES
 
       <h3>Compliance &amp; Security</h3>
       <ul>
-        <li><b>PCI-DSS</b> — if you touch card numbers. Most fintechs use a vault (Stripe, Razorpay) so they&apos;re &quot;out of scope&quot;.</li>
+        <li><b>PCI-DSS</b> — if you touch card numbers. Most fintechs use a vault (Stripe, payment gateway providers) so they&apos;re &quot;out of scope&quot;.</li>
         <li><b>KYC / AML</b> — Know Your Customer / Anti-Money Laundering checks before onboarding</li>
         <li><b>RBI guidelines</b> (India) — data localization, audit trails, customer consent</li>
         <li><b>PII handling</b> — encrypt at rest, mask in logs, role-based access</li>
@@ -56,7 +56,7 @@ INSERT INTO ledger (txn_id, account, debit, credit) VALUES
       <p>EMI = P × r × (1+r)<sup>n</sup> / ((1+r)<sup>n</sup> − 1), where P=principal, r=monthly rate (annual/12/100), n=months.</p>
 
       <h2>What 1Finance Does (refresh)</h2>
-      <p>1Finance is a personal finance qualified advisory firm — they provide independent financial planning, scoring, and education. Your work on OneHub powers their advisory platform: events, testimonials, financial planning calculator (FPC) management, personalization, and notifications.</p>
+      <p>1Finance is a personal finance qualified advisory firm — they provide independent financial planning, scoring, and education. Your work on the 1Finance website platform powers their advisory platform: events, testimonials, financial planning calculator (FPC) management, personalization, and notifications.</p>
     </>
   );
 }

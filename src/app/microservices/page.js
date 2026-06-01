@@ -4,7 +4,7 @@ export default function MicroservicesPage() {
   return (
     <>
       <h1>Microservices &amp; API Design</h1>
-      <p>You architected the OneHub API ecosystem with 28 REST endpoints, JWT auth, and Dockerized Node.js services. Be ready for REST design, auth, async patterns, and microservices trade-offs.</p>
+      <p>You contributed to the 1Finance API ecosystem with 28 REST endpoints, JWT auth, and Dockerized Node.js services. Be ready for REST design, auth, async patterns, and microservices trade-offs.</p>
 
       <h2>REST Design Principles</h2>
       <ul>

@@ -1,6 +1,6 @@
 import { Card } from "@/components/Card";
 
-export const metadata = { title: "My OneHub Modules — Interview Prep" };
+export const metadata = { title: "My 1Finance Modules — Interview Prep" };
 
 function Module({ title, route, perm, summary, owns, gotchas, talkingPoints }) {
   return (
@@ -32,14 +32,14 @@ function Module({ title, route, perm, summary, owns, gotchas, talkingPoints }) {
 export default function ModulesPage() {
   return (
     <>
-      <h1>My OneHub Modules</h1>
+      <h1>My 1Finance Modules</h1>
       <p>
-        These are the modules you actually contribute to and own end-to-end in the 1Finance OneHub
-        Go/Fiber backend. Use these as your concrete reference when interviewers ask &quot;what did
+        These are the modules you actually contribute to and own end-to-end in the 1Finance
+        Go/Fiber platform. Use these as your concrete reference when interviewers ask &quot;what did
         you build?&quot; or &quot;walk me through a feature you own.&quot;
       </p>
       <p className="text-amber-300 text-sm bg-amber-900/20 border border-amber-700 rounded p-3 my-3">
-        <b>Important framing:</b> The full OneHub backend has ~30 feature namespaces. You are a team
+        <b>Important framing:</b> The full 1Finance platform has ~30 feature namespaces. You are a team
         contributor. The list below is the subset you have <i>specifically owned</i> end-to-end. Be
         precise about scope — interviewers will probe.
       </p>
@@ -47,10 +47,10 @@ export default function ModulesPage() {
       <h2>Big Picture — Context to Set First</h2>
       <Card>
         <p>
-          &quot;1Finance has two API ecosystems. The older one is a WordPress backend with ~141
+          &quot;1Finance has two API ecosystems. The older one is a WordPress platform with ~141
           custom REST routes across a custom theme and roughly 30 plugins — credit-card,
           mutual-fund, debt, events, masterclass, sitemap, product-scoring all live there. We&apos;re
-          progressively migrating capabilities to a newer Go/Fiber backend, which is where most of
+          progressively migrating capabilities to a newer Go/Fiber platform, which is where most of
           my work happens.
         </p>
         <p>
@@ -308,7 +308,7 @@ export default function ModulesPage() {
         </p>
         <ul>
           <li><b>Magazine</b> — best for showing auth-tier design + idempotent migrations</li>
-          <li><b>In-the-News V3</b> — best for showing API-versioning and clean redesign</li>
+          <li><b>In-the-News</b> — best for showing API-versioning and clean redesign</li>
           <li><b>HR Conclave V2 speakers</b> — best for showing backward-compatible schema evolution</li>
           <li><b>Master Class</b> — best for showing OTP/auth + signed-URL content delivery</li>
         </ul>

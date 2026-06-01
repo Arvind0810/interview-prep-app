@@ -18,14 +18,14 @@ export default function RoadmapPage() {
         </ul>
       </Card>
 
-      <h2>Phase 2 — Backend Depth (Days 5–8)</h2>
+      <h2>Phase 2 — Technical Depth (Days 5–8)</h2>
       <Card>
         <ul>
           <li>GoFiber middleware patterns, request lifecycle</li>
           <li>Redis caching strategies — cache-aside, write-through, TTL design</li>
           <li>Microservices — REST design, JWT, async messaging</li>
           <li>Docker — multi-stage builds, networking, volumes</li>
-          <li>Take Quiz: Backend Deep Dive</li>
+          <li>Take Quiz: Technical Deep Dive</li>
         </ul>
       </Card>
 
@@ -34,7 +34,7 @@ export default function RoadmapPage() {
         <ul>
           <li>Next.js — SSR vs SSG vs ISR, App Router, Server Components</li>
           <li>React fundamentals — hooks, state management, performance</li>
-          <li>System Design — design a fintech notification system, design OneHub-like API gateway</li>
+          <li>System Design — design a fintech notification system, design a 1Finance-like API gateway</li>
           <li>Take Quiz: Frontend + System Design</li>
         </ul>
       </Card>

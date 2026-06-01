@@ -41,11 +41,11 @@ export default function DashboardPage() {
       <Card>
         <h3>Your Resume Snapshot (corrected)</h3>
         <p>
-          <b>Role:</b> Backend-focused Full-Stack Software Engineer • 5+ years
+          <b>Role:</b> Full-Stack Software Engineer • 5+ years
           <br />
           <b>Current:</b> Software Engineer @ NeoSOFT Technologies (Client: 1Finance) • Jan 2023–Present
           <br />
-          <b>Position:</b> Team contributor on the OneHub Go/Fiber backend — not sole architect
+          <b>Position:</b> Team contributor on the 1Finance website Go/Fiber platform
           <br />
           <b>Stack:</b> Golang/GoFiber, Node.js/NestJS, PostgreSQL, Redis, Docker, Next.js, React
           <br />

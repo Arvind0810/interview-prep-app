@@ -63,11 +63,11 @@ export default function SysDesignPage() {
         <p>Redis sorted set: <code>ZADD leaderboard score user_id</code>, <code>ZREVRANGE</code> for top N, <code>ZRANK</code> for user position. Periodic snapshot to Postgres for history.</p>
       </details>
 
-      <h2>OneHub-style API Gateway (your real system)</h2>
+      <h2>1Finance-style API Gateway (your real system)</h2>
       <p>If asked to architect your current platform from scratch:</p>
       <ol>
         <li>Edge: CloudFront/CDN → ALB → API Gateway (rate limit, auth)</li>
-        <li>OneHub backend in Go/Fiber — orchestrator service, stateless, horizontally scaled behind ALB</li>
+        <li>1Finance website platform in Go/Fiber — orchestrator service, stateless, horizontally scaled behind ALB</li>
         <li>Domain services in Node.js — calculators, scoring, personalization — communicate via REST or async queue</li>
         <li>PostgreSQL primary + read replica — connection pooled via PgBouncer</li>
         <li>Redis cluster — caching, rate limiting, session</li>

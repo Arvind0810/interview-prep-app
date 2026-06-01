@@ -4,7 +4,7 @@ export default function DSAPage() {
   return (
     <>
       <h1>DSA Refresher</h1>
-      <p>Even backend-heavy interviews include 1–2 coding rounds. You don&apos;t need leetcode hard — solid mediums on common patterns are enough.</p>
+      <p>Most interviews include 1–2 coding rounds. You don&apos;t need leetcode hard — solid mediums on common patterns are enough.</p>
 
       <h2>Must-Know Patterns</h2>
       <details><summary>Two pointers</summary>

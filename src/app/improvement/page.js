@@ -30,7 +30,7 @@ export default function ImprovementPage() {
         <li>Book: &quot;Designing Data-Intensive Applications&quot; by Martin Kleppmann (the bible)</li>
         <li>Channel: &quot;System Design Interview&quot; by Mikhail Smarshchok (ByteByteGo) — quick and crisp</li>
         <li>Practice with a peer once a week using <a href="https://excalidraw.com" target="_blank" rel="noreferrer">Excalidraw</a></li>
-        <li>Read company engineering blogs — Stripe, Uber, Discord, Razorpay, Cred</li>
+        <li>Read company engineering blogs — Stripe, Uber, Discord, Cred, PhonePe</li>
       </ul>
 
       <h2>Frontend / Next.js — Next Level</h2>

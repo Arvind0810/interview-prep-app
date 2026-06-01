@@ -7,7 +7,7 @@ const NAV = [
   { group: "Start Here", items: [
     { href: "/", label: "Dashboard" },
     { href: "/intro", label: "Self-Introduction" },
-    { href: "/modules", label: "My OneHub Modules" },
+    { href: "/modules", label: "My 1Finance Modules" },
     { href: "/roadmap", label: "Study Roadmap" },
   ]},
   { group: "Reading Materials", items: [
