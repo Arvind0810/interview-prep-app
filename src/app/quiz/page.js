@@ -51,7 +51,7 @@ export default function QuizPage() {
       localStorage.setItem("iprep_quizStats", JSON.stringify(s));
       localStorage.setItem("iprep_lastQuiz", JSON.stringify(pct));
     }
-  }, [idx, answers.length]);
+  }, [idx, answers.length, activeId, score, stats]);
 
   const back = () => {
     setActiveId(null);
