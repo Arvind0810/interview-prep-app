@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { QBANK } from "@/data/questions";
 
-const TOPICS = ["All", "Go", "Node", "SQL", "Redis", "Docker", "API", "Next/React", "SysDesign", "Behavioral", "Fintech"];
+const TOPICS = ["All", "PHP", "Laravel", "Go", "Node", "SQL", "Redis", "Docker", "API", "Next/React", "SysDesign", "Behavioral", "Fintech"];
 const DIFFS = ["All", "easy", "med", "hard"];
 
 export default function QBankPage() {
