@@ -29,8 +29,8 @@ code {
 }
 pre code { background: transparent; padding: 0; color: #e2e8f0; }
 
-table { width: 100%; border-collapse: collapse; margin: 12px 0; }
-th, td { border: 1px solid #334155; padding: 8px 12px; text-align: left; font-size: 14px; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0; display: block; overflow-x: auto; }
+th, td { border: 1px solid #334155; padding: 8px 12px; text-align: left; font-size: 14px; min-width: 120px; }
 th { background: #111827; color: #22d3ee; }
 
 details {
