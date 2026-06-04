@@ -31,6 +31,9 @@ const NAV = [
     { href: "/behavioral", label: "Behavioral & STAR" },
     { href: "/improvement", label: "Improvement Plan" },
   ]},
+  { group: "Organizations", items: [
+    { href: "/organizations/icici-lombard", label: "ICICI Lombard (Sr. Backend)" },
+  ]},
 ];
 
 export default function Sidebar() {
