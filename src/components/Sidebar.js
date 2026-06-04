@@ -13,6 +13,9 @@ const NAV = [
   { group: "Reading Materials", items: [
     { href: "/golang", label: "Golang & GoFiber" },
     { href: "/nodejs", label: "Node.js & NestJS" },
+    { href: "/php", label: "PHP Core" },
+    { href: "/wordpress", label: "WordPress" },
+    { href: "/laravel", label: "Laravel" },
     { href: "/postgresql", label: "PostgreSQL & SQL" },
     { href: "/redis", label: "Redis & Caching" },
     { href: "/docker", label: "Docker & DevOps" },

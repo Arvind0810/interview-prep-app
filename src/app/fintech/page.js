@@ -60,6 +60,76 @@ COMMIT;`}</code></pre>
         <li><b>Fraud / Risk Engine:</b> Evaluates incoming transactions against ML models or rulesets (e.g., Velocity checks: "Has this user made 10 transactions in 1 minute?"). Must execute in &lt;100ms.</li>
         <li><b>Lending / EMI:</b> Handling amortization schedules, grace periods, late fees, and compounding interest.</li>
       </ul>
+
+      {/* ────────── PAYMENT FLOWS ────────── */}
+      <h2>7. Payment Processing Flows</h2>
+      <p>Understanding how money actually moves between systems is critical.</p>
+
+      <h3>Card Payment Flow</h3>
+      <ol>
+        <li><b>Customer:</b> Enters card details on checkout page (tokenized by Stripe.js/Razorpay SDK — raw PAN never touches your server).</li>
+        <li><b>Payment Gateway:</b> (Stripe, Razorpay) receives the token, routes to the card network.</li>
+        <li><b>Card Network:</b> (Visa, Mastercard) routes the authorization request to the issuing bank.</li>
+        <li><b>Issuing Bank:</b> Approves or declines based on available balance, fraud checks, 3DS verification.</li>
+        <li><b>Authorization:</b> An authorization hold is placed on the customer&apos;s account. Money hasn&apos;t moved yet.</li>
+        <li><b>Capture:</b> The merchant captures the payment (immediately or later for hotel-style pre-auths). Now settlement begins.</li>
+        <li><b>Settlement:</b> The acquiring bank transfers funds to the merchant&apos;s bank account (T+1 to T+3 days typically).</li>
+      </ol>
+      <p><b>Key distinction:</b> Authorization ≠ Capture. A pre-auth (like a hotel hold) authorizes $500 but only captures the actual charge of $320 at checkout.</p>
+
+      <h3>UPI (India-specific — Unified Payments Interface)</h3>
+      <p>UPI is a real-time payment system developed by NPCI. It&apos;s essentially a wrapper over IMPS that allows instant bank-to-bank transfers using a Virtual Payment Address (VPA) like <code>user@upi</code>.</p>
+      <table>
+        <thead><tr><th>System</th><th>Speed</th><th>Limit</th><th>Use Case</th></tr></thead>
+        <tbody>
+          <tr><td><b>UPI</b></td><td>Real-time (seconds)</td><td>₹1 Lakh / txn</td><td>P2P transfers, merchant payments, bill payments</td></tr>
+          <tr><td><b>IMPS</b></td><td>Real-time</td><td>₹5 Lakh / txn</td><td>Instant fund transfers (bank-to-bank)</td></tr>
+          <tr><td><b>NEFT</b></td><td>Half-hourly batches (now 24/7)</td><td>No limit</td><td>Large business transfers</td></tr>
+          <tr><td><b>RTGS</b></td><td>Real-time</td><td>Min ₹2 Lakh</td><td>High-value corporate transfers</td></tr>
+        </tbody>
+      </table>
+
+      {/* ────────── SUBSCRIPTION BILLING ────────── */}
+      <h2>8. Subscription &amp; Recurring Billing</h2>
+      <ul>
+        <li><b>Trial Periods:</b> Time-limited free access. Must handle conversion to paid, cancellation, and trial extension.</li>
+        <li><b>Proration:</b> When a user upgrades mid-cycle (e.g., Basic → Premium), charge only the remaining days difference. This is complex math — most use Stripe/Chargebee for it.</li>
+        <li><b>Dunning:</b> When a recurring charge fails (card expired, insufficient funds), the system retries on a schedule (day 1, day 3, day 5) and notifies the user. After N failures, subscription is paused/cancelled.</li>
+        <li><b>Grace Period:</b> Time after payment failure where the user retains access while dunning retries.</li>
+        <li><b>Invoicing:</b> Legal requirement. Each charge must generate an invoice with tax details (GST in India, VAT in EU).</li>
+      </ul>
+
+      {/* ────────── REGULATORY ────────── */}
+      <h2>9. Regulatory Awareness</h2>
+      <ul>
+        <li><b>RBI Guidelines (India):</b> Data localization (all payment data stored in India), tokenization mandates (no card data storage by merchants), cooling-off periods for investments.</li>
+        <li><b>GDPR (Europe):</b> Right to erasure, consent management, data portability. Fines up to 4% of global revenue.</li>
+        <li><b>SOC 2:</b> An audit standard for service organizations. Type I = controls design at a point in time. Type II = controls effectiveness over 6-12 months. Most B2B fintech companies need this.</li>
+        <li><b>Open Banking:</b> Banks expose APIs (PSD2 in Europe, Account Aggregator in India) allowing third parties to access account data with user consent. Enables apps like 1Finance to aggregate financial data.</li>
+      </ul>
+
+      {/* ────────── ARCHITECTURE DECISIONS ────────── */}
+      <h2>10. Fintech Architecture Principles</h2>
+      <ul>
+        <li><b>Eventual consistency is acceptable for reads, but NEVER for money:</b> The user&apos;s dashboard balance can be eventually consistent. The ledger MUST be strongly consistent.</li>
+        <li><b>Exactly-once delivery is a myth in distributed systems:</b> Design for at-least-once delivery + idempotency. Kafka consumers must handle duplicate messages.</li>
+        <li><b>Shadow/Dry-run mode:</b> Before going live, run new financial logic in parallel with old logic. Compare outputs. Only switch once they match for 99.99% of cases.</li>
+        <li><b>Retry with dead-letter queues:</b> Failed payment webhooks go to a DLQ for manual investigation. Never silently drop financial events.</li>
+        <li><b>Immutable audit trail:</b> Append-only tables for all state changes. Never UPDATE or DELETE financial records. Use reversal transactions instead.</li>
+      </ul>
+
+      <h2>Interview Quick Reference</h2>
+      <table>
+        <thead><tr><th>Topic</th><th>Key Points to Mention</th></tr></thead>
+        <tbody>
+          <tr><td>Money Math</td><td>Never use floats. Store as integer cents/paise. Big decimal for precision. Banker&apos;s rounding.</td></tr>
+          <tr><td>Idempotency</td><td>Client generates UUID. Server checks before processing. Prevents double charges.</td></tr>
+          <tr><td>Ledger</td><td>Double-entry: every transaction has balanced debit + credit. Immutable (append-only). Reversal transactions, not UPDATEs.</td></tr>
+          <tr><td>Security</td><td>PCI-DSS (use tokenization to avoid). KYC/AML. PII encryption (AES-256). Masked logs.</td></tr>
+          <tr><td>Webhooks</td><td>HMAC signature verification. Replay protection (timestamp). Async processing (return 200 immediately).</td></tr>
+          <tr><td>Payments</td><td>Authorization vs Capture. Settlement (T+1 to T+3). UPI real-time. NEFT batched. Dunning for failed recurring.</td></tr>
+        </tbody>
+      </table>
     </>
   );
 }

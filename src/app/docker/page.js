@@ -94,6 +94,168 @@ CMD ["node", "dist/main.js"]`}</code></pre>
         <li><b>Blue/Green:</b> Spin up a completely new environment (Green) alongside the old one (Blue). Test Green. Flip the load balancer to route 100% traffic to Green. Immediate rollback if needed. Requires 2x infrastructure cost.</li>
         <li><b>Canary:</b> Route 5% of traffic to the new version. Monitor error rates. If stable, increase to 10%, 50%, 100%. Safest, but complex to orchestrate.</li>
       </ul>
+
+      {/* ────────── DOCKER COMPOSE ────────── */}
+      <h2>Docker Compose</h2>
+      <p>Docker Compose defines multi-container applications in a single YAML file. Essential for local development environments.</p>
+      <pre><code>{`# docker-compose.yml
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgres://user:pass@db:5432/myapp
+      - REDIS_URL=redis://cache:6379
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_started
+    volumes:
+      - ./src:/app/src  # Hot reload in development
+    networks:
+      - backend
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: myapp
+    volumes:
+      - pg_data:/var/lib/postgresql/data  # Persist data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend
+
+  cache:
+    image: redis:7-alpine
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    networks:
+      - backend
+
+volumes:
+  pg_data:
+
+networks:
+  backend:
+    driver: bridge`}</code></pre>
+
+      <h3>Key Commands</h3>
+      <ul>
+        <li><code>docker compose up -d</code> — Start all services in background</li>
+        <li><code>docker compose down -v</code> — Stop and remove volumes</li>
+        <li><code>docker compose logs -f api</code> — Follow logs for a specific service</li>
+        <li><code>docker compose exec api sh</code> — Shell into a running container</li>
+        <li><code>docker compose build --no-cache</code> — Rebuild without cache</li>
+      </ul>
+
+      {/* ────────── NETWORKING ────────── */}
+      <h2>Docker Networking</h2>
+      <table>
+        <thead><tr><th>Network Type</th><th>Use Case</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><b>bridge</b> (default)</td><td>Containers on same host talk to each other</td><td>Containers resolved by name in custom bridge networks</td></tr>
+          <tr><td><b>host</b></td><td>Container shares host&apos;s network stack</td><td>No port mapping needed. Best performance. No isolation.</td></tr>
+          <tr><td><b>none</b></td><td>Complete network isolation</td><td>Container has no network access at all</td></tr>
+          <tr><td><b>overlay</b></td><td>Multi-host networking (Docker Swarm/K8s)</td><td>Containers across different machines communicate</td></tr>
+        </tbody>
+      </table>
+      <pre><code>{`# Port mapping: HOST:CONTAINER
+docker run -p 8080:3000 myapp    # Host 8080 → Container 3000
+docker run -p 127.0.0.1:8080:3000 myapp  # Only localhost
+
+# DNS resolution in compose
+# Services can reach each other by service name:
+# api can connect to "db:5432" and "cache:6379"`}</code></pre>
+
+      {/* ────────── SECURITY ────────── */}
+      <h2>Container Security Best Practices</h2>
+      <ul>
+        <li><b>Never run as root:</b> Use <code>USER node</code> or <code>USER 1001</code> in Dockerfile. Root in container ≈ root on host (with misconfigured runtimes).</li>
+        <li><b>Use minimal base images:</b> <code>alpine</code> (~5MB) or <code>distroless</code> (no shell at all). Fewer packages = fewer CVEs.</li>
+        <li><b>Scan images:</b> Use <code>docker scout</code>, Trivy, or Snyk to scan for known vulnerabilities before deploying.</li>
+        <li><b>Don&apos;t store secrets in images:</b> Use build-time secrets (<code>--mount=type=secret</code>) or runtime secrets (K8s Secrets, Vault). Never <code>ENV SECRET_KEY=...</code> in Dockerfile.</li>
+        <li><b>Read-only filesystem:</b> Run containers with <code>--read-only</code> flag and mount only necessary writable paths.</li>
+        <li><b>Pin image versions:</b> Use <code>node:20.11-alpine</code> not <code>node:latest</code>. Reproducible builds.</li>
+        <li><b>Use .dockerignore:</b> Exclude <code>node_modules</code>, <code>.git</code>, <code>.env</code> files from the build context.</li>
+      </ul>
+
+      {/* ────────── DOCKER VOLUMES ────────── */}
+      <h2>Storage &amp; Volumes</h2>
+      <pre><code>{`# Named volumes (managed by Docker — best for databases)
+docker volume create pg_data
+docker run -v pg_data:/var/lib/postgresql/data postgres
+
+# Bind mounts (map host directory — best for development)
+docker run -v $(pwd)/src:/app/src myapp
+
+# tmpfs mounts (in-memory only — for sensitive temp data)
+docker run --tmpfs /tmp myapp
+
+# Volume gotchas:
+# - Named volumes persist across container restarts
+# - Bind mounts follow host file permissions
+# - Don't store important data in the container's writable layer`}</code></pre>
+
+      {/* ────────── HELM ────────── */}
+      <h2>Helm Charts (K8s Package Manager)</h2>
+      <p>Helm packages Kubernetes manifests into reusable, version-controlled charts. Like <code>npm</code> for K8s.</p>
+      <pre><code>{`# Install a chart
+helm install my-release bitnami/postgresql
+
+# Upgrade with new values
+helm upgrade my-release bitnami/postgresql --set primary.persistence.size=50Gi
+
+# Chart structure
+my-chart/
+  Chart.yaml          # Metadata (name, version, dependencies)
+  values.yaml         # Default configuration values
+  templates/          # K8s manifest templates with Go templating
+    deployment.yaml
+    service.yaml
+    ingress.yaml
+  charts/             # Sub-chart dependencies`}</code></pre>
+
+      {/* ────────── TROUBLESHOOTING ────────── */}
+      <h2>Common Troubleshooting</h2>
+      <pre><code>{`# Debug a failing container
+docker logs <container_id>               # Check logs
+docker exec -it <container_id> sh        # Shell into running container
+docker inspect <container_id>            # Full metadata (env vars, mounts, network)
+docker stats                             # Live CPU/Memory usage
+
+# Debug build issues
+docker build --no-cache .                # Rebuild without cache
+docker build --progress=plain .          # See full build output
+
+# Clean up disk space
+docker system prune -a                   # Remove all unused images/containers
+docker volume prune                      # Remove unused volumes
+docker system df                         # Show disk usage`}</code></pre>
+
+      <h2>Interview Quick Reference</h2>
+      <table>
+        <thead><tr><th>Topic</th><th>Key Points to Mention</th></tr></thead>
+        <tbody>
+          <tr><td>Docker vs VM</td><td>Containers share host kernel (namespaces + cgroups). VMs virtualize hardware. Containers: faster, lighter, less isolation.</td></tr>
+          <tr><td>Dockerfile</td><td>Multi-stage builds, layer caching (COPY package.json first), alpine base, USER non-root, ENTRYPOINT vs CMD.</td></tr>
+          <tr><td>Networking</td><td>Bridge (default, DNS by name), host (no isolation), overlay (multi-host). Port mapping HOST:CONTAINER.</td></tr>
+          <tr><td>K8s Architecture</td><td>Pod (smallest unit), Deployment (manages replicas), Service (stable DNS/IP), Ingress (HTTP routing).</td></tr>
+          <tr><td>K8s Control Plane</td><td>API Server, etcd (state store), Scheduler, Controller Manager.</td></tr>
+          <tr><td>Deployment Strategies</td><td>Rolling (default, zero downtime), Blue/Green (instant rollback, 2x cost), Canary (gradual, safest).</td></tr>
+          <tr><td>Security</td><td>Non-root user, minimal base images, scan for CVEs, don't embed secrets, .dockerignore, read-only FS.</td></tr>
+        </tbody>
+      </table>
     </>
   );
 }

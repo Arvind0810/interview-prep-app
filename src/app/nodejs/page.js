@@ -67,6 +67,82 @@ const fastest = await Promise.race([
 // Any - first to fulfill wins (ignores rejections unless all reject)
 const firstSuccess = await Promise.any([ping(server1), ping(server2)]);`}</code></pre>
 
+      {/* ────────── ERROR HANDLING ────────── */}
+      <h2>Error Handling Patterns</h2>
+      <p>Proper error handling is critical in Node.js — an unhandled error can crash your entire process.</p>
+
+      <h3>Async Error Handling</h3>
+      <pre><code>{`// Always wrap async/await in try-catch
+async function getUser(id) {
+  try {
+    const user = await db.findUser(id);
+    if (!user) throw new NotFoundError('User not found');
+    return user;
+  } catch (err) {
+    if (err instanceof NotFoundError) throw err;
+    throw new InternalError('Failed to fetch user', { cause: err });
+  }
+}
+
+// Custom error classes (essential for APIs)
+class AppError extends Error {
+  constructor(message, statusCode = 500, isOperational = true) {
+    super(message);
+    this.statusCode = statusCode;
+    this.isOperational = isOperational; // operational vs programmer error
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+class NotFoundError extends AppError {
+  constructor(message = 'Resource not found') {
+    super(message, 404);
+  }
+}
+
+class ValidationError extends AppError {
+  constructor(errors) {
+    super('Validation failed', 400);
+    this.errors = errors;
+  }
+}
+
+// Global error handler middleware (Express)
+app.use((err, req, res, next) => {
+  const status = err.statusCode || 500;
+  const message = err.isOperational ? err.message : 'Internal server error';
+  
+  // Log programmer errors with full stack
+  if (!err.isOperational) {
+    console.error('UNEXPECTED ERROR:', err);
+  }
+  
+  res.status(status).json({ error: message });
+});`}</code></pre>
+
+      <h3>Process-Level Error Handling</h3>
+      <pre><code>{`// Catch unhandled promise rejections (CRITICAL)
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection:', reason);
+  // Log, send to Sentry, then gracefully shut down
+  process.exit(1);
+});
+
+// Catch uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  // Must exit — process state is unreliable after uncaught exception
+  process.exit(1);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', async () => {
+  console.log('SIGTERM received. Shutting down gracefully...');
+  await server.close();     // stop accepting new connections
+  await db.disconnect();    // close DB pool
+  process.exit(0);
+});`}</code></pre>
+
       {/* ────────── CORE MODULES ────────── */}
       <h2>Core Modules &amp; Concepts</h2>
 
@@ -87,7 +163,25 @@ await pipeline(
   fs.createReadStream('input.txt'),
   zlib.createGzip(),
   fs.createWriteStream('input.txt.gz')
-);`}</code></pre>
+);
+
+// Transform stream example — process CSV line-by-line
+const { Transform } = require('stream');
+
+class CSVParser extends Transform {
+  _transform(chunk, encoding, callback) {
+    const lines = chunk.toString().split('\\n');
+    for (const line of lines) {
+      const record = line.split(',');
+      this.push(JSON.stringify(record) + '\\n');
+    }
+    callback();
+  }
+}
+
+fs.createReadStream('data.csv')
+  .pipe(new CSVParser())
+  .pipe(fs.createWriteStream('output.json'));`}</code></pre>
 
       <h3>EventEmitter</h3>
       <p>The core of Node&apos;s event-driven architecture. Much of the Node.js core API is built around an idiomatic asynchronous event-driven architecture.</p>
@@ -98,7 +192,27 @@ const myEmitter = new MyEmitter();
 myEmitter.on('event', (data) => {
   console.log('an event occurred!', data);
 });
-myEmitter.emit('event', { id: 1 });`}</code></pre>
+myEmitter.emit('event', { id: 1 });
+
+// Real-world pattern: Order processing
+class OrderProcessor extends EventEmitter {
+  async processOrder(order) {
+    try {
+      await this.chargePayment(order);
+      this.emit('payment:success', order);
+      
+      await this.fulfillOrder(order);
+      this.emit('order:fulfilled', order);
+    } catch (err) {
+      this.emit('order:failed', order, err);
+    }
+  }
+}
+
+const processor = new OrderProcessor();
+processor.on('payment:success', (order) => sendReceipt(order));
+processor.on('order:fulfilled', (order) => notifyWarehouse(order));
+processor.on('order:failed', (order, err) => alertOps(order, err));`}</code></pre>
 
       <h3>CommonJS vs ES Modules</h3>
       <table>
@@ -110,6 +224,18 @@ myEmitter.emit('event', { id: 1 });`}</code></pre>
           <tr><td>Default in Node.js historically</td><td>Standard in browsers, native in Node.js via <code>.mjs</code> or <code>&quot;type&quot;: &quot;module&quot;</code></td></tr>
         </tbody>
       </table>
+
+      {/* ────────── SECURITY ────────── */}
+      <h2>Security Best Practices</h2>
+      <ul>
+        <li><b>Input Validation:</b> Always validate and sanitize inputs. Use libraries like <code>joi</code>, <code>zod</code>, or <code>class-validator</code> (NestJS). Never trust <code>req.body</code> directly.</li>
+        <li><b>SQL/NoSQL Injection:</b> Use parameterized queries (<code>$1</code> placeholders) or ORMs (Prisma, TypeORM). Never concatenate user input into queries.</li>
+        <li><b>Rate Limiting:</b> Use <code>express-rate-limit</code> or NestJS&apos;s <code>@nestjs/throttler</code> to prevent brute force attacks.</li>
+        <li><b>Helmet:</b> <code>app.use(helmet())</code> sets security HTTP headers (CSP, X-Frame-Options, etc.).</li>
+        <li><b>CORS:</b> Be explicit about allowed origins. Never use <code>cors({`{ origin: '*' }`})</code> in production with credentials.</li>
+        <li><b>Dependency Auditing:</b> Run <code>npm audit</code> regularly. Use <code>npm audit fix</code> for patching. Consider Snyk for CI/CD.</li>
+        <li><b>Environment Variables:</b> Never hardcode secrets. Use <code>.env</code> files locally and secret managers (Vault, AWS Secrets Manager) in production.</li>
+      </ul>
 
       {/* ────────── PERFORMANCE ────────── */}
       <h2>Performance &amp; Scaling</h2>
@@ -124,6 +250,33 @@ myEmitter.emit('event', { id: 1 });`}</code></pre>
       <h3>Memory Limits</h3>
       <p>If your app crashes with <code>FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory</code>, you can increase it via:</p>
       <pre><code>{`node --max-old-space-size=4096 index.js`}</code></pre>
+
+      <h3>Performance Monitoring</h3>
+      <pre><code>{`// Built-in performance hooks
+const { performance, PerformanceObserver } = require('perf_hooks');
+
+// Measure operation duration
+performance.mark('start-db-query');
+const result = await db.query('SELECT * FROM users');
+performance.mark('end-db-query');
+performance.measure('DB Query', 'start-db-query', 'end-db-query');
+
+// Observe measurements
+const obs = new PerformanceObserver((items) => {
+  items.getEntries().forEach((entry) => {
+    console.log(\`\${entry.name}: \${entry.duration}ms\`);
+  });
+});
+obs.observe({ entryTypes: ['measure'] });
+
+// Memory monitoring
+const used = process.memoryUsage();
+console.log({
+  rss: \`\${Math.round(used.rss / 1024 / 1024)} MB\`,      // Total memory
+  heapTotal: \`\${Math.round(used.heapTotal / 1024 / 1024)} MB\`, // V8 heap
+  heapUsed: \`\${Math.round(used.heapUsed / 1024 / 1024)} MB\`,  // Used heap
+  external: \`\${Math.round(used.external / 1024 / 1024)} MB\`,   // C++ objects bound to JS
+});`}</code></pre>
 
       {/* ────────── NESTJS ────────── */}
       <h2>NestJS Core Concepts</h2>
@@ -179,6 +332,121 @@ export class CalculatorController {
   ]
 })`}</code></pre>
 
+      {/* ────────── ADVANCED NESTJS ────────── */}
+      <h2>Advanced NestJS Patterns</h2>
+
+      <h3>Custom Guards</h3>
+      <pre><code>{`@Injectable()
+export class RolesGuard implements CanActivate {
+  constructor(private reflector: Reflector) {}
+  
+  canActivate(context: ExecutionContext): boolean {
+    const requiredRoles = this.reflector.getAllAndOverride<string[]>('roles', [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (!requiredRoles) return true;
+    
+    const { user } = context.switchToHttp().getRequest();
+    return requiredRoles.some((role) => user.roles?.includes(role));
+  }
+}
+
+// Custom decorator
+const Roles = (...roles: string[]) => SetMetadata('roles', roles);
+
+// Usage
+@Controller('admin')
+@UseGuards(JwtAuthGuard, RolesGuard)
+export class AdminController {
+  @Get('users')
+  @Roles('admin', 'super-admin')
+  findAllUsers() { /* ... */ }
+}`}</code></pre>
+
+      <h3>Custom Interceptors</h3>
+      <pre><code>{`// Logging interceptor — measures request duration
+@Injectable()
+export class LoggingInterceptor implements NestInterceptor {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    const req = context.switchToHttp().getRequest();
+    const now = Date.now();
+    
+    return next.handle().pipe(
+      tap(() => {
+        console.log(\`\${req.method} \${req.url} — \${Date.now() - now}ms\`);
+      }),
+    );
+  }
+}
+
+// Transform response interceptor
+@Injectable()
+export class TransformInterceptor<T> implements NestInterceptor<T, Response<T>> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<Response<T>> {
+    return next.handle().pipe(
+      map(data => ({
+        success: true,
+        data,
+        timestamp: new Date().toISOString(),
+      })),
+    );
+  }
+}`}</code></pre>
+
+      <h3>Exception Filters</h3>
+      <pre><code>{`@Catch(HttpException)
+export class HttpExceptionFilter implements ExceptionFilter {
+  catch(exception: HttpException, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse();
+    const request = ctx.getRequest();
+    const status = exception.getStatus();
+    
+    response.status(status).json({
+      statusCode: status,
+      timestamp: new Date().toISOString(),
+      path: request.url,
+      message: exception.message,
+    });
+  }
+}`}</code></pre>
+
+      <h3>NestJS Microservices</h3>
+      <pre><code>{`// Transport layers — NestJS supports multiple patterns
+// TCP, Redis, NATS, MQTT, Kafka, gRPC, RabbitMQ
+
+// Microservice server (TCP example)
+const app = await NestFactory.createMicroservice(AppModule, {
+  transport: Transport.TCP,
+  options: { host: '0.0.0.0', port: 3001 },
+});
+
+// Message pattern handler
+@Controller()
+export class MathController {
+  @MessagePattern({ cmd: 'sum' })
+  accumulate(data: number[]): number {
+    return data.reduce((a, b) => a + b, 0);
+  }
+  
+  @EventPattern('user_created')
+  async handleUserCreated(data: { userId: string }) {
+    // Event-based: fire-and-forget (no response expected)
+    await this.analyticsService.track('user_created', data);
+  }
+}
+
+// Client calling the microservice
+@Injectable()
+export class AppService {
+  constructor(@Inject('MATH_SERVICE') private client: ClientProxy) {}
+  
+  async getSum(numbers: number[]) {
+    return this.client.send({ cmd: 'sum' }, numbers).toPromise();
+  }
+}`}</code></pre>
+
       {/* ────────── FRAMEWORKS ────────── */}
       <h2>Express vs Fastify vs NestJS</h2>
       <table>
@@ -189,6 +457,42 @@ export class CalculatorController {
           <tr><td><b>NestJS</b></td><td>Opinionated, Angular-like</td><td>Excellent for enterprise, strict TypeScript, built-in DI architecture</td><td>Steep learning curve, lots of boilerplate</td></tr>
         </tbody>
       </table>
+
+      {/* ────────── TYPESCRIPT ────────── */}
+      <h2>TypeScript Essentials for Node.js</h2>
+      <p>NestJS is TypeScript-first. Interviewers expect you to know these TypeScript patterns.</p>
+      <pre><code>{`// Utility types you must know
+type Partial<T>    // Makes all properties optional
+type Required<T>   // Makes all properties required
+type Pick<T, K>    // Pick specific properties
+type Omit<T, K>    // Remove specific properties
+type Record<K, V>  // Key-value map type
+
+// Practical examples
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: 'admin' | 'user';
+}
+
+type CreateUserDTO = Omit<User, 'id'>;           // No ID on creation
+type UpdateUserDTO = Partial<Omit<User, 'id'>>;   // All fields optional for update
+type UserSummary = Pick<User, 'id' | 'name'>;     // Just id and name
+
+// Generics in service patterns
+interface Repository<T> {
+  findById(id: string): Promise<T | null>;
+  findAll(): Promise<T[]>;
+  create(data: Partial<T>): Promise<T>;
+  update(id: string, data: Partial<T>): Promise<T>;
+  delete(id: string): Promise<void>;
+}
+
+class UserRepository implements Repository<User> {
+  async findById(id: string): Promise<User | null> { /* ... */ }
+  // ... other methods
+}`}</code></pre>
       
       <h2>Interview Quick Reference</h2>
       <table>
@@ -196,10 +500,13 @@ export class CalculatorController {
         <tbody>
           <tr><td>Event Loop</td><td>Single-threaded, non-blocking, phases (timers, poll, check), nextTick vs setImmediate</td></tr>
           <tr><td>Async Patterns</td><td>Promise.all vs Promise.allSettled, async/await, try/catch</td></tr>
+          <tr><td>Error Handling</td><td>Custom error classes, operational vs programmer errors, process.on(&apos;unhandledRejection&apos;), graceful shutdown</td></tr>
           <tr><td>Memory</td><td>V8 heap limits (~1.4GB), buffer, streams for large data to prevent OOM</td></tr>
           <tr><td>Scaling</td><td>Cluster (multi-process) vs Worker Threads (multi-thread for CPU bound tasks)</td></tr>
+          <tr><td>Security</td><td>Input validation (zod/joi), helmet, rate limiting, parameterized queries, CORS</td></tr>
           <tr><td>NestJS DI</td><td>IoC container, singletons by default, easy mocking for tests, modules encapsulate scope</td></tr>
           <tr><td>NestJS Lifecycle</td><td>Middleware → Guards → Interceptors → Pipes → Controller → Filters</td></tr>
+          <tr><td>NestJS Advanced</td><td>Custom guards/decorators, interceptors for logging/transform, microservice transports (TCP, Redis, Kafka)</td></tr>
         </tbody>
       </table>
     </>

@@ -110,6 +110,24 @@ export default function SysDesignPage() {
         <p><b>Conflict Resolution:</b> Vector clocks or Last-Write-Wins (LWW) to resolve simultaneous updates.</p>
       </details>
       
+      {/* ────────── CACHING STRATEGIES ────────── */}
+      <h2>Caching Strategies</h2>
+      <ul>
+        <li><b>Cache-Aside (Lazy Loading):</b> App asks cache. If miss, app asks DB, writes to cache, returns to user. (Best for read-heavy).</li>
+        <li><b>Write-Through:</b> App writes to cache, cache synchronously writes to DB. (Data is always consistent, but writes are slower).</li>
+        <li><b>Write-Behind (Write-Back):</b> App writes to cache, cache immediately returns success, then asynchronously writes to DB. (Fastest writes, but data loss risk if cache crashes).</li>
+        <li><b>Eviction Policies:</b> LRU (Least Recently Used) is standard. LFU (Least Frequently Used) is good for heavy tails. FIFO (First In First Out).</li>
+      </ul>
+
+      {/* ────────── LOAD BALANCING ALGORITHMS ────────── */}
+      <h2>Load Balancing Algorithms</h2>
+      <ul>
+        <li><b>Round Robin:</b> Distribute requests sequentially. Fails if servers have different capacities.</li>
+        <li><b>Weighted Round Robin:</b> Assign weights (e.g., Server A gets 3x traffic of Server B based on RAM/CPU).</li>
+        <li><b>Least Connections:</b> Send traffic to the server with the fewest active connections. Great for long-lived connections (WebSockets).</li>
+        <li><b>IP Hash:</b> Hash the client's IP to assign them to a consistent server. Good for sticky sessions (though stateless servers + Redis is better).</li>
+      </ul>
+      
       {/* ────────── TRADE OFFS ────────── */}
       <h2>Important Trade-offs to Discuss</h2>
       <ul>
@@ -117,6 +135,20 @@ export default function SysDesignPage() {
         <li><b>Long Polling vs WebSockets vs Server-Sent Events:</b> Polling is bad. Long Polling is okay for rare updates. WebSockets for bi-directional high-frequency (chat, games). SSE for unidirectional server-to-client (stock tickers).</li>
         <li><b>Microservices vs Monolith:</b> Monoliths are faster to build and have no network latency. Microservices allow independent scaling, tech diversity, and isolated deployments, but introduce massive operational complexity (tracing, network failures).</li>
       </ul>
+
+      <h2>Interview Quick Reference</h2>
+      <table>
+        <thead><tr><th>Concept</th><th>When to use it</th></tr></thead>
+        <tbody>
+          <tr><td>CDN (Cloudflare, CloudFront)</td><td>Serving static assets globally with low latency.</td></tr>
+          <tr><td>API Gateway</td><td>Rate limiting, authentication, request routing, SSL termination.</td></tr>
+          <tr><td>Message Queue (Kafka/RabbitMQ)</td><td>Async processing, decoupling microservices, buffering high traffic (bursts).</td></tr>
+          <tr><td>Redis / Memcached</td><td>Caching DB queries, session storage, distributed locks, leaderboards (Sorted Sets).</td></tr>
+          <tr><td>Elasticsearch</td><td>Full-text search, log aggregation, complex faceted querying.</td></tr>
+          <tr><td>Consistent Hashing</td><td>Distributing data across a cluster of servers without mass re-shuffling on scale out/in.</td></tr>
+          <tr><td>Gossip Protocol</td><td>Peer-to-peer state sharing in decentralized clusters (Cassandra/Redis Cluster).</td></tr>
+        </tbody>
+      </table>
     </>
   );
 }
