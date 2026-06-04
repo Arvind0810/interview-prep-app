@@ -137,6 +137,91 @@ export default function ICICILombardPage() {
         <p>In a microservices architecture, it makes sense to use Go for high-throughput, compute-intensive APIs (like processing thousands of motor insurance claims or premium calculations concurrently), while PHP might still serve the legacy admin portals. Communication between them can happen via REST APIs or message queues like Kafka/RabbitMQ.</p>
       </details>
 
+      <details><summary>8. How do Goroutines differ from OS Threads, and how do you prevent Race Conditions?</summary>
+        <p><strong>Answer:</strong></p>
+        <ul>
+          <li><strong>Goroutines vs Threads:</strong> Goroutines are user-space threads managed by the Go runtime, not the OS. They are extremely lightweight (starting at ~2KB of stack space compared to 1-2MB for OS threads), meaning you can spawn hundreds of thousands of them. They are multiplexed onto a smaller number of OS threads by the Go scheduler (M:N scheduling).</li>
+          <li><strong>Preventing Race Conditions:</strong> A race condition occurs when multiple goroutines access the same memory concurrently and at least one is writing. To prevent this, I use the <code>sync.Mutex</code> (or <code>sync.RWMutex</code> for read-heavy workloads) to lock critical sections. Alternatively, following Go's proverb: <em>"Do not communicate by sharing memory; instead, share memory by communicating"</em>, I use <strong>channels</strong> to safely pass data between goroutines without explicit locking. I also religiously use the <code>-race</code> flag (<code>go test -race</code> or <code>go build -race</code>) during development to catch issues early.</li>
+        </ul>
+      </details>
+
+      <details><summary>9. In a microservices architecture, how do you handle distributed transactions (e.g., deducting a balance in one service and issuing a policy in another)?</summary>
+        <p><strong>Answer:</strong></p>
+        <p>Since ACID transactions don't span across multiple microservices databases, we have to rely on Eventual Consistency.</p>
+        <ul>
+          <li><strong>Saga Pattern:</strong> I would implement the Saga pattern. It's a sequence of local transactions. Each local transaction updates the database and publishes an event or message to trigger the next local transaction in the saga.</li>
+          <li><strong>Compensating Transactions:</strong> If a step fails (e.g., the payment succeeds but the policy issuance fails), the saga executes a series of compensating transactions that undo the changes made by the preceding local transactions (e.g., issuing a refund).</li>
+          <li><strong>Implementation:</strong> This can be orchestrated via a central controller (Orchestration-based Saga) or through decentralized events published to a message broker like Kafka or RabbitMQ (Choreography-based Saga).</li>
+        </ul>
+      </details>
+
+      <details><summary>10. How do you implement data protection and secure APIs handling sensitive insurance data?</summary>
+        <p><strong>Answer:</strong></p>
+        <p>Insurance deals with PII (Personally Identifiable Information) and financial data, so security is paramount.</p>
+        <ul>
+          <li><strong>Encryption in Transit & at Rest:</strong> All API communication must be over HTTPS/TLS 1.2+. Sensitive database columns (like bank accounts or PAN numbers) should be encrypted at rest using a Key Management Service (AWS KMS or HashiCorp Vault) and AES-256-GCM.</li>
+          <li><strong>Data Masking:</strong> When returning data to the frontend or writing to logs, sensitive information should be masked (e.g., logging <code>XXXX-XXXX-XXXX-1234</code> instead of a full credit card number).</li>
+          <li><strong>Input Validation & Parameterized Queries:</strong> Always validate incoming payloads against a strict schema (e.g., using Go's <code>validator</code> package) and use parameterized queries (via <code>database/sql</code> or an ORM like GORM) to prevent SQL injection.</li>
+          <li><strong>Rate Limiting & WAF:</strong> Implement IP-based and User-based rate limiting to prevent brute-force attacks and DDoS, alongside a Web Application Firewall.</li>
+        </ul>
+      </details>
+
+      <details><summary>11. What is your approach to building reusable code and libraries for future use?</summary>
+        <p><strong>Answer:</strong></p>
+        <p>The JD specifically asks for this. To build reusable libraries in Go:</p>
+        <ul>
+          <li><strong>Keep it focused (Single Responsibility):</strong> A library should do one thing well. For example, creating a centralized <code>logger</code> package or a <code>metrics</code> package that standardizes how all IL microservices report data.</li>
+          <li><strong>Design around Interfaces:</strong> Accept interfaces and return structs. This allows consumers of the library to mock the library easily in their own unit tests.</li>
+          <li><strong>Versioning and Dependency Management:</strong> Extract the reusable code into its own Git repository and tag it using Semantic Versioning (v1.0.0). Other projects can import it via Go Modules. Ensure backward compatibility; if introducing breaking changes, bump the major version (v2).</li>
+          <li><strong>Documentation:</strong> Write clear GoDoc comments for all exported functions and provide a <code>README.md</code> with usage examples.</li>
+        </ul>
+      </details>
+
+      <details><summary>12. How do you optimize a MySQL database when queries start becoming slow as data scales?</summary>
+        <p><strong>Answer:</strong></p>
+        <ul>
+          <li><strong>Execution Plan (EXPLAIN):</strong> First, I run <code>EXPLAIN</code> on the slow query to see if it's doing a full table scan or using an index.</li>
+          <li><strong>Indexing:</strong> Add B-Tree indexes to columns used in <code>WHERE</code>, <code>JOIN</code>, and <code>ORDER BY</code> clauses. If querying multiple columns together frequently, create a <strong>Composite Index</strong> (remembering the left-most prefix rule).</li>
+          <li><strong>Avoid N+1 Queries:</strong> In application code, ensure we aren't running a query inside a loop. Use <code>IN (...)</code> clauses or JOINs to fetch related data in a single batch.</li>
+          <li><strong>Archiving / Partitioning:</strong> In insurance, old expired policies might not be accessed often. We can partition the table by date or archive old records to a data warehouse to keep the hot table small and fast.</li>
+          <li><strong>Read Replicas:</strong> Route all <code>SELECT</code> queries to read-replicas, freeing up the primary master database for <code>INSERT/UPDATE/DELETE</code> operations.</li>
+        </ul>
+      </details>
+
+      <details><summary>13. Our tech stack involves integrating React frontends with server-side logic. How do you handle Cross-Origin Resource Sharing (CORS) and API design for React?</summary>
+        <p><strong>Answer:</strong></p>
+        <ul>
+          <li><strong>CORS:</strong> Since the React app (e.g., <code>portal.icicilombard.com</code>) might be hosted on a different domain or port than the Go API (e.g., <code>api.icicilombard.com</code>), the browser enforces the Same-Origin Policy. I would configure the Go backend's CORS middleware to explicitly allow the React app's origin, specifying allowed methods (GET, POST, PUT) and headers (Authorization, Content-Type).</li>
+          <li><strong>BFF (Backend-for-Frontend) Pattern:</strong> Instead of making the React app aggregate data from 5 different microservices, I would build a Go aggregation layer (BFF) that fetches the data concurrently, formats it exactly how the UI needs it, and returns a single JSON payload. This reduces client-side latency and battery drain on mobile devices.</li>
+        </ul>
+      </details>
+
+      <details><summary>14. How do you ensure high availability and observability for your Go services?</summary>
+        <p><strong>Answer:</strong></p>
+        <ul>
+          <li><strong>Statelessness:</strong> Design the Go application to be completely stateless. Session data should live in Redis, not in application memory. This allows us to spin up multiple instances of the Go app behind a load balancer without worrying about sticky sessions.</li>
+          <li><strong>Health Checks:</strong> Expose <code>/healthz</code> and <code>/readyz</code> endpoints. Kubernetes or the Load Balancer uses these to know if the application is ready to accept traffic or if it needs to be restarted.</li>
+          <li><strong>Observability:</strong>
+            <ul>
+              <li><em>Logs:</em> Use structured JSON logging (e.g., using <code>slog</code> or <code>zap</code>) so logs can be easily parsed by ELK/Datadog.</li>
+              <li><em>Metrics:</em> Expose Prometheus metrics (CPU, memory, HTTP request durations, error rates).</li>
+              <li><em>Tracing:</em> Implement Distributed Tracing (OpenTelemetry/Jaeger) by passing a trace ID through the context. When a request hits multiple microservices, the trace ID allows us to visualize the entire path and find the exact bottleneck.</li>
+            </ul>
+          </li>
+        </ul>
+      </details>
+
+      <details><summary>15. What is your strategy for managing code using version control (Git) in a collaborative team?</summary>
+        <p><strong>Answer:</strong></p>
+        <p>The JD requires "Proficient understanding of code versioning tools."</p>
+        <ul>
+          <li><strong>Branching Strategy:</strong> I typically use Trunk-Based Development or GitHub Flow. Main branch is always deployable. We create short-lived feature branches, open Pull Requests (PRs), and merge back to main quickly.</li>
+          <li><strong>Code Reviews & CI/CD:</strong> A PR must be reviewed by at least one other engineer. I set up GitHub Actions / GitLab CI to automatically run <code>go fmt</code>, <code>golangci-lint</code>, and <code>go test</code> on every push. The PR cannot be merged if the build or tests fail.</li>
+          <li><strong>Merge vs Rebase:</strong> I prefer rebasing my feature branch onto the latest <code>main</code> before merging to keep a clean, linear commit history without unnecessary merge commits.</li>
+        </ul>
+      </details>
+
+
       <h2>Behavioral Tips for this Role</h2>
       <ul>
         <li><strong>"Displayed ownership in building end-to-end applications":</strong> Be ready to use the STAR method (Situation, Task, Action, Result) to describe a project where you took a feature from gathering requirements to database design, backend implementation, and production deployment.</li>
