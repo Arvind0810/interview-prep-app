@@ -43,10 +43,10 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile Top Bar */}
-      <div className="md:hidden bg-panel2 border-b border-border p-4 flex justify-between items-center sticky top-0 z-20">
-        <div className="font-bold text-lg text-accent">Interview Prep Hub</div>
-        <button onClick={() => setIsOpen(!isOpen)} className="text-slate-200 focus:outline-none">
+      {/* Mobile Bottom Bar */}
+      <div className="md:hidden bg-panel2 border-t border-border p-4 flex justify-between items-center fixed bottom-0 left-0 right-0 z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+        <div className="font-bold text-lg text-accent truncate pr-4">Interview Prep Hub</div>
+        <button onClick={() => setIsOpen(!isOpen)} className="text-slate-200 focus:outline-none shrink-0 bg-slate-800 p-2 rounded-full">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             {isOpen ? (
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

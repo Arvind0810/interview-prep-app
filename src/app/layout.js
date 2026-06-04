@@ -12,7 +12,7 @@ export default function RootLayout({ children }) {
       <body>
         <div className="flex flex-col md:flex-row min-h-screen">
           <Sidebar />
-          <main className="flex-1 p-4 md:p-10 max-w-5xl overflow-x-hidden">
+          <main className="flex-1 p-4 pb-24 md:p-10 max-w-5xl overflow-x-hidden">
             <div className="prose-section">{children}</div>
           </main>
         </div>
