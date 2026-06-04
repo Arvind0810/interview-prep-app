@@ -72,7 +72,20 @@ export default function ICICILombardPage() {
         <p>In Go, modularity is achieved through proper package management and the use of interfaces.</p>
         <ul>
           <li><strong>Clean Architecture:</strong> I separate the application into layers: Handlers (HTTP/gRPC), Use Cases (Business Logic), and Repositories (Data Access).</li>
-          <li><strong>Dependency Injection:</strong> Rather than tightly coupling components, I define interfaces for repositories and third-party services, and inject them into the Use Cases. This makes the code highly modular and testable.</li>
+          <li><strong>Dependency Injection:</strong> Rather than tightly coupling components, I define interfaces for repositories and third-party services, and inject them into the Use Cases. This makes the code highly modular and testable.
+<pre><code>{`// Example of Dependency Injection
+type PolicyRepository interface {
+    Save(ctx context.Context, policy Policy) error
+}
+
+type PolicyService struct {
+    repo PolicyRepository
+}
+
+func NewPolicyService(r PolicyRepository) *PolicyService {
+    return &PolicyService{repo: r}
+}`}</code></pre>
+          </li>
           <li><strong>Package Layout:</strong> I group files by domain (e.g., <code>/motor</code>, <code>/claims</code>, <code>/policies</code>) rather than by type (e.g., all controllers in one folder). This follows Domain-Driven Design (DDD) principles.</li>
         </ul>
       </details>
@@ -81,7 +94,14 @@ export default function ICICILombardPage() {
         <p><strong>Answer:</strong></p>
         <p>When integrating with external or legacy systems, I assume they can fail or be slow.</p>
         <ul>
-          <li><strong>Timeouts:</strong> Use Go's <code>context.WithTimeout</code> for every outgoing HTTP/gRPC request to prevent our goroutines from hanging indefinitely.</li>
+          <li><strong>Timeouts:</strong> Use Go's <code>context.WithTimeout</code> for every outgoing HTTP/gRPC request to prevent our goroutines from hanging indefinitely.
+<pre><code>{`// Example: 5-second timeout for external API call
+ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+defer cancel()
+
+req, _ := http.NewRequestWithContext(ctx, "GET", "https://blaze.api/legacy", nil)
+resp, err := http.DefaultClient.Do(req)`}</code></pre>
+          </li>
           <li><strong>Circuit Breaker:</strong> Implement a circuit breaker (like Netflix Hystrix or <code>go-resiliency</code>) to stop sending requests if the legacy system is down, allowing it time to recover and serving a fallback response to the user.</li>
           <li><strong>Retries with Exponential Backoff:</strong> For transient errors (e.g., HTTP 503), implement retries with increasing delays.</li>
           <li><strong>Idempotency:</strong> Ensure the APIs we call (or expose) are idempotent, especially for financial transactions like premium payments, so retrying a request doesn't result in double-charging.</li>
@@ -103,7 +123,25 @@ export default function ICICILombardPage() {
         <p>TDD involves writing the test before the actual implementation (Red-Green-Refactor).</p>
         <ul>
           <li><strong>Interfaces for Mocking:</strong> I define interfaces for any external dependency (e.g., <code>Database</code> interface, <code>EmailSender</code> interface).</li>
-          <li><strong>Table-Driven Tests:</strong> Go's idioms heavily favor table-driven tests. I create a slice of anonymous structs defining the input, expected output, and expected error, and iterate through them using <code>t.Run()</code>.</li>
+          <li><strong>Table-Driven Tests:</strong> Go's idioms heavily favor table-driven tests. I create a slice of anonymous structs defining the input, expected output, and expected error, and iterate through them using <code>t.Run()</code>.
+<pre><code>{`func TestCalculatePremium(t *testing.T) {
+    tests := []struct {
+        name     string
+        age      int
+        expected int
+    }{
+        {"Young driver", 20, 1500},
+        {"Experienced driver", 35, 800},
+    }
+
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            result := CalculatePremium(tt.age)
+            assert.Equal(t, tt.expected, result)
+        })
+    }
+}`}</code></pre>
+          </li>
           <li><strong>Mock Generation:</strong> I use <code>gomock</code> or manually write mock structs that implement the interfaces to isolate the business logic during testing.</li>
           <li><strong>Coverage:</strong> I run <code>go test -cover</code> to ensure the critical business paths are covered, particularly for complex logic like insurance premium calculations.</li>
         </ul>
@@ -123,7 +161,22 @@ export default function ICICILombardPage() {
       <details><summary>6. How would you optimize a Go application for maximum speed?</summary>
         <p><strong>Answer:</strong></p>
         <ul>
-          <li><strong>Concurrency:</strong> Utilize Goroutines to process independent tasks in parallel (e.g., fetching user profile and policy documents simultaneously). Use <code>sync.WaitGroup</code> to synchronize them.</li>
+          <li><strong>Concurrency:</strong> Utilize Goroutines to process independent tasks in parallel (e.g., fetching user profile and policy documents simultaneously). Use <code>sync.WaitGroup</code> to synchronize them.
+<pre><code>{`var wg sync.WaitGroup
+wg.Add(2)
+
+go func() {
+    defer wg.Done()
+    fetchUserProfile()
+}()
+
+go func() {
+    defer wg.Done()
+    fetchPolicyDocuments()
+}()
+
+wg.Wait() // Wait for both concurrent tasks to finish`}</code></pre>
+          </li>
           <li><strong>Connection Pooling:</strong> Ensure the database connection pool (<code>sql.DB</code>) is properly configured (<code>SetMaxOpenConns</code>, <code>SetMaxIdleConns</code>) to prevent exhausting database connections or spending too much time establishing new ones.</li>
           <li><strong>Profiling:</strong> Use Go's built-in <code>pprof</code> tool to identify CPU bottlenecks and memory leaks (e.g., identifying goroutine leaks or excessive memory allocations).</li>
           <li><strong>Avoid Reflection:</strong> Reflection in Go (like using the <code>encoding/json</code> package extensively on dynamic payloads) is slow. Where possible, use code generation (like <code>easyjson</code>) or avoid <code>interface{}</code> types.</li>
@@ -141,7 +194,19 @@ export default function ICICILombardPage() {
         <p><strong>Answer:</strong></p>
         <ul>
           <li><strong>Goroutines vs Threads:</strong> Goroutines are user-space threads managed by the Go runtime, not the OS. They are extremely lightweight (starting at ~2KB of stack space compared to 1-2MB for OS threads), meaning you can spawn hundreds of thousands of them. They are multiplexed onto a smaller number of OS threads by the Go scheduler (M:N scheduling).</li>
-          <li><strong>Preventing Race Conditions:</strong> A race condition occurs when multiple goroutines access the same memory concurrently and at least one is writing. To prevent this, I use the <code>sync.Mutex</code> (or <code>sync.RWMutex</code> for read-heavy workloads) to lock critical sections. Alternatively, following Go's proverb: <em>"Do not communicate by sharing memory; instead, share memory by communicating"</em>, I use <strong>channels</strong> to safely pass data between goroutines without explicit locking. I also religiously use the <code>-race</code> flag (<code>go test -race</code> or <code>go build -race</code>) during development to catch issues early.</li>
+          <li><strong>Preventing Race Conditions:</strong> A race condition occurs when multiple goroutines access the same memory concurrently and at least one is writing. To prevent this, I use the <code>sync.Mutex</code> (or <code>sync.RWMutex</code> for read-heavy workloads) to lock critical sections. Alternatively, following Go's proverb: <em>"Do not communicate by sharing memory; instead, share memory by communicating"</em>, I use <strong>channels</strong> to safely pass data between goroutines without explicit locking. I also religiously use the <code>-race</code> flag (<code>go test -race</code> or <code>go build -race</code>) during development to catch issues early.
+<pre><code>{`type SafeCounter struct {
+    mu sync.Mutex
+    v  map[string]int
+}
+
+func (c *SafeCounter) Inc(key string) {
+    c.mu.Lock()
+    // Lock so only one goroutine at a time can access the map c.v.
+    c.v[key]++
+    c.mu.Unlock()
+}`}</code></pre>
+          </li>
         </ul>
       </details>
 
