@@ -33,6 +33,7 @@ const NAV = [
   ]},
   { group: "Organizations", items: [
     { href: "/organizations/icici-lombard", label: "ICICI Lombard (Sr. Backend)" },
+    { href: "/organizations/custom-software-engineer", label: "Custom Software Engineer" },
   ]},
 ];
 
