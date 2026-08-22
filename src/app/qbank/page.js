@@ -37,7 +37,7 @@ export default function QBankPage() {
 
   return (
     <>
-      <h1>Question Bank (150+)</h1>
+      <h1>Question Bank ({QBANK.length})</h1>
       <p>Filter by topic and difficulty. Click a question to expand the answer. Mark as reviewed to track progress.</p>
 
       <input

@@ -7,8 +7,9 @@ import systemDesign from "./quizzes/system-design";
 import nextjsReact from "./quizzes/nextjs-react";
 import apisMicroservices from "./quizzes/apis-microservices";
 import fintechDomain from "./quizzes/fintech-domain";
+import rewardsPlatform from "./quizzes/rewards-platform";
 
-// MCQ quizzes — 8 topics, ~50 questions each
+// MCQ quizzes — 9 topics
 export const QUIZZES = {
   "go-basics": goBasics,
   "go-advanced": goAdvanced,
@@ -18,4 +19,5 @@ export const QUIZZES = {
   "nextjs-react": nextjsReact,
   "apis-microservices": apisMicroservices,
   "fintech-domain": fintechDomain,
+  "rewards-platform": rewardsPlatform,
 };
