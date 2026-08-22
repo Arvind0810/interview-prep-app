@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { QUIZZES } from "@/data/quizzes";
 
 export default function QuizPage() {
@@ -9,15 +9,19 @@ export default function QuizPage() {
   const [score, setScore] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [picked, setPicked] = useState(null);
+  const recordedRef = useRef(false);
+  const hydratedRef = useRef(false);
 
   useEffect(() => {
     try {
       const s = JSON.parse(localStorage.getItem("iprep_quizStats") || "{}");
       setStats(s);
     } catch {}
+    hydratedRef.current = true;
   }, []);
 
   const start = (id) => {
+    recordedRef.current = false;
     setActiveId(id);
     setIdx(0);
     setScore(0);
@@ -28,30 +32,37 @@ export default function QuizPage() {
   const pick = (i) => {
     if (picked !== null) return;
     setPicked(i);
-    const q = QUIZZES[activeId].questions[idx];
-    const correct = i === q.c;
-    if (correct) setScore((s) => s + 1);
+    if (i === QUIZZES[activeId].questions[idx].c) setScore((s) => s + 1);
     setAnswers((a) => [...a, i]);
-    setTimeout(() => {
-      setPicked(null);
-      setIdx((n) => n + 1);
-    }, 900);
+  };
+
+  const next = () => {
+    setPicked(null);
+    setIdx((n) => n + 1);
   };
 
   useEffect(() => {
-    if (!activeId) return;
+    if (!activeId || recordedRef.current) return;
     const quiz = QUIZZES[activeId];
-    if (idx >= quiz.questions.length && answers.length === quiz.questions.length) {
-      const pct = Math.round((score / quiz.questions.length) * 100);
-      const s = { ...stats };
-      s[activeId] = s[activeId] || { best: 0, attempts: 0 };
-      s[activeId].best = Math.max(s[activeId].best, pct);
-      s[activeId].attempts++;
-      setStats(s);
-      localStorage.setItem("iprep_quizStats", JSON.stringify(s));
+    if (idx < quiz.questions.length || answers.length !== quiz.questions.length) return;
+
+    recordedRef.current = true;
+    const pct = Math.round((score / quiz.questions.length) * 100);
+    setStats((prev) => {
+      const entry = prev[activeId] || { best: 0, attempts: 0 };
+      return { ...prev, [activeId]: { best: Math.max(entry.best, pct), attempts: entry.attempts + 1 } };
+    });
+    try {
       localStorage.setItem("iprep_lastQuiz", JSON.stringify(pct));
-    }
-  }, [idx, answers.length, activeId, score, stats]);
+    } catch {}
+  }, [idx, answers.length, activeId, score]);
+
+  useEffect(() => {
+    if (!hydratedRef.current) return;
+    try {
+      localStorage.setItem("iprep_quizStats", JSON.stringify(stats));
+    } catch {}
+  }, [stats]);
 
   const back = () => {
     setActiveId(null);
@@ -118,34 +129,62 @@ export default function QuizPage() {
   }
 
   const q = quiz.questions[idx];
+  const answered = picked !== null;
+  const correct = answered && picked === q.c;
+  const isLast = idx === quiz.questions.length - 1;
+  const progress = ((idx + (answered ? 1 : 0)) / quiz.questions.length) * 100;
 
   return (
     <>
       <h1>{quiz.emoji} {quiz.title}</h1>
       <div className="bg-panel border border-border rounded-xl p-5 my-3">
         <div className="h-2 bg-panel2 rounded overflow-hidden my-2">
-          <div className="h-full bg-gradient-to-r from-cyan-500 to-violet-500" style={{ width: `${(idx / quiz.questions.length) * 100}%` }} />
+          <div className="h-full bg-gradient-to-r from-cyan-500 to-violet-500 transition-all duration-300" style={{ width: `${progress}%` }} />
         </div>
         <p className="text-slate-400 text-sm">Question {idx + 1} of {quiz.questions.length}</p>
         <h3 className="text-slate-100 mt-0 text-lg font-semibold">{q.q}</h3>
         {q.o.map((opt, i) => {
-          let cls = "bg-panel2 border-border";
-          if (picked !== null) {
+          let cls = "bg-panel2 border-border hover:border-accent";
+          if (answered) {
             if (i === q.c) cls = "bg-emerald-900/50 border-emerald-500";
             else if (i === picked) cls = "bg-red-900/50 border-red-500";
+            else cls = "bg-panel2 border-border opacity-60";
           }
           return (
-            <div
+            <button
               key={i}
+              type="button"
               onClick={() => pick(i)}
-              className={`block px-3 py-2 my-2 rounded-md border cursor-pointer transition-all ${cls} hover:border-accent`}
+              disabled={answered}
+              className={`block w-full text-left px-3 py-2 my-2 rounded-md border transition-all ${cls} ${answered ? "cursor-default" : "cursor-pointer"}`}
             >
               {String.fromCharCode(65 + i)}. {opt}
-            </div>
+            </button>
           );
         })}
+
+        {answered && (
+          <div className={`mt-4 rounded-md border p-4 ${correct ? "border-emerald-600 bg-emerald-900/20" : "border-red-600 bg-red-900/20"}`}>
+            <p className={`m-0 font-semibold ${correct ? "text-emerald-400" : "text-red-400"}`}>
+              {correct ? "✓ Correct" : `✗ Not quite — the answer is ${String.fromCharCode(65 + q.c)}. ${q.o[q.c]}`}
+            </p>
+            <p className="text-slate-300 text-sm mt-2 mb-0">{q.e}</p>
+          </div>
+        )}
       </div>
-      <button onClick={back} className="px-4 py-2 border border-border text-slate-200 rounded-md text-sm">← Exit quiz</button>
+
+      <div className="flex flex-wrap gap-3 items-center">
+        {answered && (
+          <button
+            onClick={next}
+            className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 text-slate-900 font-semibold rounded-md"
+          >
+            {isLast ? "See results →" : "Next question →"}
+          </button>
+        )}
+        <button onClick={back} className="px-4 py-2 border border-border text-slate-200 rounded-md text-sm">← Exit quiz</button>
+        {!answered && <span className="text-xs text-slate-500">Pick an answer to see the explanation.</span>}
+      </div>
     </>
   );
 }
