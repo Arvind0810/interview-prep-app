@@ -8,6 +8,7 @@ const NAV = [
     { href: "/", label: "Dashboard" },
     { href: "/intro", label: "Self-Introduction" },
     { href: "/modules", label: "My 1Finance Modules" },
+    { href: "/hr-community", label: "HR Community Platform (Latest)" },
     { href: "/roadmap", label: "Study Roadmap" },
   ]},
   { group: "Reading Materials", items: [
@@ -26,7 +27,7 @@ const NAV = [
     { href: "/dsa", label: "DSA Refresher" },
   ]},
   { group: "Practice", items: [
-    { href: "/qbank", label: "Question Bank (150+)" },
+    { href: "/qbank", label: "Question Bank (330+)" },
     { href: "/quiz", label: "Skill Test (Quizzes)" },
     { href: "/behavioral", label: "Behavioral & STAR" },
     { href: "/improvement", label: "Improvement Plan" },

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Card } from "@/components/Card";
 
 export const metadata = { title: "My 1Finance Modules — Interview Prep" };
@@ -300,6 +301,68 @@ export default function ModulesPage() {
         ]}
       />
 
+      <h2>Systems You Contribute To (Not Yours to Claim)</h2>
+      <p className="text-amber-300 text-sm bg-amber-900/20 border border-amber-700 rounded p-3 my-3">
+        <b>Scope discipline:</b> everything above is a module you own end-to-end. What follows is a
+        system you <i>contribute</i> to — you did not architect it. That distinction is worth
+        protecting: an interviewer who catches you overclaiming stops believing the parts that were
+        true. &quot;I worked on it and here is what I took from it&quot; is a strong answer on its own.
+      </p>
+
+      <Card>
+        <h3 className="m-0 text-violet-400">India HR Conclave — HR Community Platform (hrbackend/v2)</h3>
+        <p className="text-xs text-slate-400 mt-1 mb-2">
+          Gateway <code>:8000</code> → 7 built services + 2 stubs • <code>/api/v1/&lt;resource&gt;/*</code>
+        </p>
+        <p>
+          <b>What the product is:</b> a gated professional community for HR practitioners — approval-based
+          membership rather than open signup, member profiles, blogs with a public feed, a Q&amp;A surface
+          where members post queries and answer each other, workshop requests, and peer referrals.
+        </p>
+        <p>
+          <b>The feature that makes it technically interesting:</b> a points and rewards layer used to drive
+          engagement. Members earn points for completing their profile, following the LinkedIn page, referring
+          peers, publishing a blog and other admin-defined tasks, then redeem them for vouchers at
+          <b> 1 point = ₹1</b>. A growth mechanic whose currency is real money — so it is built with
+          financial-grade discipline rather than gamification-grade.
+        </p>
+        <p><b>What you can speak to (as a contributor):</b></p>
+        <ul>
+          <li>The points ledger — append-only with a DB trigger, one write path, deterministic idempotency keys, relative balance updates under a row lock</li>
+          <li>Transactional outbox + Kafka — the event row written in the same transaction as the state change; at-least-once delivery paired with idempotent effects</li>
+          <li>Redemption saga — reserve-then-confirm, compensation on definitive failure, and a distinct state for an ambiguous provider response</li>
+          <li>The gated membership model — approval workflow, onboarding gate, suspend-never-delete</li>
+          <li>The referral loop — the referrer earns when the referee is <i>approved</i>, which is the anti-abuse design</li>
+          <li>Deterministic PII encryption so encrypted email and phone still back unique indexes and equality lookups</li>
+        </ul>
+        <p><b>Likely questions on this system:</b></p>
+        <ul>
+          <li>Isn&apos;t a ledger over-engineered for a community site?</li>
+          <li>Why check the idempotency key before the sufficiency check?</li>
+          <li>How do you get exactly-once processing? (You do not — at-least-once plus idempotent effects.)</li>
+          <li>A provider call times out: refund or confirm?</li>
+          <li>Why does the referrer earn on approval rather than on signup?</li>
+          <li>What does deterministic encryption leak, and why accept it?</li>
+          <li><b>And the one that decides the rest:</b> what did <i>you</i> personally do on it?</li>
+        </ul>
+        <p><b>What to say if asked &quot;walk me through this&quot;:</b></p>
+        <p className="text-slate-300 italic">
+          &quot;It&apos;s a gated community platform for HR professionals — members are reviewed and
+          approved rather than just signing up, and they profile, blog, ask and answer each other&apos;s
+          questions, and refer peers in. To drive engagement there&apos;s a points feature where a point
+          is a rupee, redeemable for vouchers. I contributed to that system rather than designing it, but
+          it&apos;s where most of my distributed-systems exposure comes from — because a growth feature
+          that pays real money is a fraud surface, so it&apos;s built with financial-grade discipline:
+          balances are a cache over an append-only ledger, every movement carries a deterministic
+          idempotency key, and credits are applied by a worker consuming an event rather than on a
+          request path. I&apos;d be happy to go into the specific pieces I worked on.&quot;
+        </p>
+        <p className="text-sm text-slate-400 mt-3">
+          Full deep dive with architecture, invariants, failure modes and traps:{" "}
+          <Link href="/hr-community">HR Community Platform →</Link>
+        </p>
+      </Card>
+
       <h2>How to Use This List in an Interview</h2>
       <Card>
         <p>
@@ -312,6 +375,10 @@ export default function ModulesPage() {
           <li><b>HR Conclave V2 speakers</b> — best for showing backward-compatible schema evolution</li>
           <li><b>Master Class</b> — best for showing OTP/auth + signed-URL content delivery</li>
         </ul>
+        <p>
+          For distributed-systems depth, reach for the <b>HR community platform</b> instead — but lead
+          with what you personally did there before discussing the ledger or the saga.
+        </p>
         <p>
           For depth questions, lean on the actual patterns you use: Fiber router groups,
           CheckUserDataBase permission-keyed RBAC, StaticTokenAuth for internal endpoints,
