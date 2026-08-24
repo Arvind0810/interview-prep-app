@@ -1,3 +1,6 @@
+import Diagram from "@/components/Diagram";
+import { DIAGRAMS } from "@/data/diagrams";
+
 export const metadata = { title: "System Design — Interview Prep" };
 
 export default function SysDesignPage() {
@@ -32,6 +35,7 @@ export default function SysDesignPage() {
       </table>
       
       <h3>Latency Numbers Every Programmer Should Know</h3>
+      <Diagram entry={DIAGRAMS["latency-numbers"]} />
       <table>
         <thead><tr><th>Operation</th><th>Time</th></tr></thead>
         <tbody>
@@ -48,10 +52,13 @@ export default function SysDesignPage() {
       <h2>Core Concepts to Master</h2>
       
       <h3>CAP Theorem &amp; PACELC</h3>
+      <Diagram entry={DIAGRAMS["cap-theorem"]} />
       <p><b>CAP Theorem:</b> In a distributed system, you can only guarantee two out of three: Consistency, Availability, Partition Tolerance. Since network partitions (P) are unavoidable, you must choose between Consistency (CP) and Availability (AP).</p>
       <p><b>PACELC Theorem:</b> Extends CAP. <i>If</i> Partition (P), choose Availability (A) or Consistency (C). <i>Else</i> (E) - when running normally - choose Latency (L) or Consistency (C).</p>
 
       <h3>Database Scaling</h3>
+      <Diagram entry={DIAGRAMS["db-scaling"]} />
+      <Diagram entry={DIAGRAMS["replica-lag"]} />
       <ul>
         <li><b>Vertical Scaling (Scale Up):</b> Buy a bigger server. Easy, but has a hard limit and no redundancy.</li>
         <li><b>Horizontal Scaling (Scale Out):</b> Add more servers. Harder to implement (requires sharding), but infinite scale.</li>
@@ -62,9 +69,11 @@ export default function SysDesignPage() {
       </ul>
 
       <h3>Consistent Hashing</h3>
+      <Diagram entry={DIAGRAMS["consistent-hashing"]} />
       <p>When you have a cluster of cache servers (e.g., 4 Redis nodes), a standard hash <code>hash(key) % N</code> breaks completely if you add or remove a node (all data gets reshuffled). <b>Consistent hashing</b> maps both data and servers onto a circular ring. A key is assigned to the next server clockwise on the ring. Adding/removing a server only affects its immediate neighbors (1/N of the data moves).</p>
 
       <h3>Load Balancing</h3>
+      <Diagram entry={DIAGRAMS["load-balancing"]} />
       <ul>
         <li><b>L4 (Transport Layer):</b> Routes based on IP and Port. Very fast, unaware of content.</li>
         <li><b>L7 (Application Layer):</b> Routes based on HTTP headers, URLs, cookies. Can do SSL termination and smart routing.</li>
@@ -112,6 +121,8 @@ export default function SysDesignPage() {
       
       {/* ────────── CACHING STRATEGIES ────────── */}
       <h2>Caching Strategies</h2>
+      <Diagram entry={DIAGRAMS["caching-strategies"]} />
+      <Diagram entry={DIAGRAMS["cache-stampede"]} />
       <ul>
         <li><b>Cache-Aside (Lazy Loading):</b> App asks cache. If miss, app asks DB, writes to cache, returns to user. (Best for read-heavy).</li>
         <li><b>Write-Through:</b> App writes to cache, cache synchronously writes to DB. (Data is always consistent, but writes are slower).</li>

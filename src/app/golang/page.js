@@ -1,3 +1,6 @@
+import Diagram from "@/components/Diagram";
+import { DIAGRAMS } from "@/data/diagrams";
+
 export const metadata = { title: "Golang & GoFiber — Interview Prep" };
 
 export default function GolangPage() {
@@ -214,6 +217,7 @@ fmt.Println(emp.City)   // promoted from Address`}</code></pre>
 
       {/* ────────── POINTERS ────────── */}
       <h2>Pointers</h2>
+      <Diagram entry={DIAGRAMS["method-set"]} />
       <pre><code>{`// & = address of, * = dereference
 x := 42
 p := &x      // p is *int, holds address of x
@@ -325,6 +329,7 @@ if errors.As(err, &valErr) {
 
       {/* ────────── CONTEXT ────────── */}
       <h2>Context — Deep Dive</h2>
+      <Diagram entry={DIAGRAMS["context-tree"]} />
       <p>Pass <code>ctx context.Context</code> as the first argument to every function that does I/O. It carries deadlines, cancellation signals, and request-scoped values.</p>
       <pre><code>{`// Creating contexts
 ctx := context.Background()                        // root — never cancelled
@@ -357,6 +362,7 @@ resp, err := client.Do(req)`}</code></pre>
 
       <h3>Slices</h3>
       <p>Slices are the workhorse of Go. They are headers (pointer, length, capacity) over an underlying array.</p>
+      <Diagram entry={DIAGRAMS["slice-header"]} />
       <pre><code>{`// Creating slices
 s1 := []int{1, 2, 3}           // literal
 s2 := make([]int, 5)           // len=5, cap=5, zeroed
@@ -417,6 +423,7 @@ for key, value := range m {
 // - Use sync.RWMutex or sync.Map for concurrency`}</code></pre>
 
       <h3>Strings</h3>
+      <Diagram entry={DIAGRAMS["string-bytes-runes"]} />
       <pre><code>{`// Strings are immutable byte slices (UTF-8)
 s := "Hello, 世界"
 fmt.Println(len(s))              // 13 (bytes, not characters!)
@@ -523,6 +530,7 @@ func describe(i interface{}) string {
 
       {/* ────────── DEFER, PANIC, RECOVER ────────── */}
       <h2>Defer, Panic &amp; Recover</h2>
+      <Diagram entry={DIAGRAMS["defer-lifo"]} />
       <pre><code>{`// defer runs at function exit (LIFO order)
 func readFile(path string) ([]byte, error) {
     f, err := os.Open(path)
@@ -555,6 +563,7 @@ func safeDiv(a, b int) (result int, err error) {
       <p>Concurrency is Go&apos;s superpower. Goroutines are lightweight (~2KB stack vs ~1MB for OS threads). Channels are how goroutines communicate safely.</p>
 
       <h3>Goroutines</h3>
+      <Diagram entry={DIAGRAMS["goroutine-states"]} />
       <pre><code>{`// Start a goroutine
 go doWork()
 
@@ -575,6 +584,7 @@ func sendWhatsApp(userID string, msg string) {
       <p><b>Gotchas:</b> Don&apos;t spawn unbounded goroutines on a hot path — use a worker pool or semaphore channel. Always handle panics inside goroutines or they crash the whole process.</p>
 
       <h3>Channels</h3>
+      <Diagram entry={DIAGRAMS["channel-blocking"]} />
       <pre><code>{`// Unbuffered — blocks until both sides ready (synchronous)
 ch := make(chan int)
 
@@ -605,8 +615,10 @@ for msg := range ch {
         <li><b>P</b> = Processor (logical) — holds a local run queue, GOMAXPROCS sets the count</li>
       </ul>
       <p>Each P has a local run queue. Ms bind to Ps to execute Gs. When a G blocks on I/O, the M detaches and the P picks up another M. <b>Work stealing</b>: idle Ps steal from busy Ps&apos; queues for load balancing.</p>
+      <Diagram entry={DIAGRAMS["gmp-scheduler"]} />
 
       <h3>Mutexes &amp; Sync Primitives</h3>
+      <Diagram entry={DIAGRAMS["mutex-rwmutex"]} />
       <pre><code>{`// sync.Mutex — mutual exclusion
 type SafeCounter struct {
     mu    sync.Mutex
@@ -666,6 +678,7 @@ atomic.AddInt64(&counter, 1)
 val := atomic.LoadInt64(&counter)`}</code></pre>
 
       <h2>Concurrency Patterns You Should Know</h2>
+      <Diagram entry={DIAGRAMS["worker-pool"]} />
       <details><summary>Worker Pool</summary>
         <pre><code>{`func workerPool(numWorkers int, jobs []Job) {
     jobCh := make(chan Job, len(jobs))

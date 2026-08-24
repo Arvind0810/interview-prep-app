@@ -1,3 +1,6 @@
+import Diagram from "@/components/Diagram";
+import { DIAGRAMS } from "@/data/diagrams";
+
 export const metadata = { title: "Fintech Domain — Interview Prep" };
 
 export default function FintechPage() {
@@ -17,6 +20,7 @@ export default function FintechPage() {
 
       {/* ────────── IDEMPOTENCY ────────── */}
       <h2>2. Idempotency (Critical)</h2>
+      <Diagram entry={DIAGRAMS["idempotency-key"]} />
       <p>Network calls fail. If a client sends a "Charge $100" request and the connection drops before the server replies, the client will retry. Without idempotency, the user gets charged $200.</p>
       <ul>
         <li>Client generates a unique UUID (<code>Idempotency-Key</code>) and includes it in the HTTP header.</li>
@@ -27,6 +31,7 @@ export default function FintechPage() {
 
       {/* ────────── LEDGER ────────── */}
       <h2>3. Double-Entry Accounting (The Ledger)</h2>
+      <Diagram entry={DIAGRAMS["double-entry-ledger"]} />
       <p>Money is never "created" or "destroyed", it only moves. Every transaction requires at least two ledger entries: a Debit (Dr) and a Credit (Cr) that must balance to zero.</p>
       <pre><code>{`-- Moving $50 from Alice to Bob
 BEGIN;

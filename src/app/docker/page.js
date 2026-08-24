@@ -1,3 +1,6 @@
+import Diagram from "@/components/Diagram";
+import { DIAGRAMS } from "@/data/diagrams";
+
 export const metadata = { title: "Docker & Kubernetes — Interview Prep" };
 
 export default function DockerPage() {
@@ -8,6 +11,7 @@ export default function DockerPage() {
 
       {/* ────────── DOCKER INTERNALS ────────── */}
       <h2>How Docker Actually Works</h2>
+      <Diagram entry={DIAGRAMS["container-vs-vm"]} />
       <p>Docker is not a Virtual Machine. A VM virtualizes the hardware and runs a full Guest OS. Docker virtualizes the OS kernel. Containers share the host kernel.</p>
       <ul>
         <li><b>Namespaces:</b> Provide isolation. Ensure a container only sees its own processes, network interfaces, and file system. (What it can <i>see</i>).</li>
@@ -17,6 +21,7 @@ export default function DockerPage() {
 
       {/* ────────── DOCKERFILE BEST PRACTICES ────────── */}
       <h2>Dockerfile Best Practices</h2>
+      <Diagram entry={DIAGRAMS["docker-layers"]} />
       <p>A poorly written Dockerfile creates massive, slow, and insecure images.</p>
       <pre><code>{`# 1. Use an official, lightweight base image
 FROM node:20.11-alpine AS builder

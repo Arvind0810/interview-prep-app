@@ -1,3 +1,6 @@
+import Diagram from "@/components/Diagram";
+import { DIAGRAMS } from "@/data/diagrams";
+
 export const metadata = { title: "Laravel — Interview Prep" };
 
 export default function LaravelPage() {
@@ -8,6 +11,7 @@ export default function LaravelPage() {
 
       {/* ────────── ARCHITECTURE ────────── */}
       <h2>Laravel Architecture</h2>
+      <Diagram entry={DIAGRAMS["laravel-lifecycle"]} />
 
       <h3>The Service Container (IoC Container)</h3>
       <p>This is the <b>heart of Laravel</b>. It manages class dependencies and performs dependency injection. Everything in Laravel — routes, controllers, middleware, events — is resolved through the container.</p>
@@ -115,6 +119,7 @@ Route::middleware('throttle:60,1')->group(function () {
 
       {/* ────────── MIDDLEWARE ────────── */}
       <h2>Middleware</h2>
+      <Diagram entry={DIAGRAMS["middleware-pipeline"]} />
       <p>Middleware filters HTTP requests entering your application. Think of it as layers of an onion — the request passes through each layer going in, and the response passes through each layer going out.</p>
       <pre><code>{`class EnsureUserIsAdmin {
     public function handle(Request $request, Closure $next): Response {
@@ -150,6 +155,7 @@ class LogSlowRequests {
 
       {/* ────────── ELOQUENT ORM ────────── */}
       <h2>Eloquent ORM — Deep Dive</h2>
+      <Diagram entry={DIAGRAMS["n-plus-one"]} />
       <p>Eloquent is Laravel&apos;s ActiveRecord ORM. Each model maps to a database table.</p>
 
       <h3>Basic CRUD</h3>

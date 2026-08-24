@@ -1,4 +1,6 @@
 import { Card } from "@/components/Card";
+import Diagram from "@/components/Diagram";
+import { DIAGRAMS } from "@/data/diagrams";
 
 export const metadata = { title: "PostgreSQL & SQL — Interview Prep" };
 
@@ -19,10 +21,12 @@ export default function PostgresPage() {
       </ul>
       
       <h3>MVCC (Multi-Version Concurrency Control)</h3>
+      <Diagram entry={DIAGRAMS["mvcc-versions"]} />
       <p>Postgres uses MVCC for isolation. Instead of locking a row when reading/writing, it creates a <i>new version</i> of the row. <b>Readers don&apos;t block writers, and writers don&apos;t block readers.</b> Old rows are marked as dead tuples and cleaned up later by the <code>VACUUM</code> process. If autovacuum fails to keep up, the table bloats.</p>
 
       {/* ────────── INDEXES ────────── */}
       <h2>Indexes Deep Dive</h2>
+      <Diagram entry={DIAGRAMS["btree-index"]} />
       <p>An index is a separate data structure that maps column values to row locations (TID - Tuple Identifier). Trade-off: faster reads, slower writes, more disk space.</p>
       <table>
         <thead><tr><th>Type</th><th>When to use</th><th>Notes</th></tr></thead>
@@ -48,6 +52,8 @@ export default function PostgresPage() {
 
       {/* ────────── EXPLAIN ANALYZE ────────── */}
       <h2>Query Optimization &amp; EXPLAIN ANALYZE</h2>
+      <Diagram entry={DIAGRAMS["index-scan-types"]} />
+      <Diagram entry={DIAGRAMS["sargable"]} />
       <p><code>EXPLAIN</code> shows the planner&apos;s estimate. <code>EXPLAIN ANALYZE</code> actually runs the query and shows real timings.</p>
       <pre><code>{`EXPLAIN (ANALYZE, BUFFERS)
 SELECT * FROM events WHERE user_id = 'u123' AND created_at > NOW() - INTERVAL '7 days';`}</code></pre>
@@ -65,6 +71,7 @@ SELECT * FROM events WHERE user_id = 'u123' AND created_at > NOW() - INTERVAL '7
 
       {/* ────────── N+1 PROBLEM ────────── */}
       <h2>The N+1 Problem</h2>
+      <Diagram entry={DIAGRAMS["n-plus-one"]} />
       <p>The most common ORM/SQL performance bug. You load a list of N items, then make a query for each item.</p>
       <pre><code>{`-- BAD: 1 + N queries (e.g. loops in code)
 users := db.Query("SELECT id FROM users")
@@ -80,6 +87,7 @@ orders := db.Query("SELECT * FROM orders WHERE user_id = ANY($1::uuid[])", userI
 
       {/* ────────── ISOLATION LEVELS ────────── */}
       <h2>Transactions &amp; Isolation Levels</h2>
+      <Diagram entry={DIAGRAMS["isolation-anomalies"]} />
       <p>Isolation levels prevent anomalies when multiple transactions run concurrently.</p>
       <table>
         <thead><tr><th>Level</th><th>Dirty Read</th><th>Non-repeatable Read</th><th>Phantom Read</th></tr></thead>
@@ -99,6 +107,7 @@ orders := db.Query("SELECT * FROM orders WHERE user_id = ANY($1::uuid[])", userI
       </ul>
 
       <h3>Pessimistic vs Optimistic Locking</h3>
+      <Diagram entry={DIAGRAMS["deadlock"]} />
       <p>For high-stakes data like money transfers, you must prevent race conditions:</p>
       <pre><code>{`-- Pessimistic Locking (Row-level lock)
 BEGIN;
@@ -114,6 +123,7 @@ WHERE id = 1 AND version = 5;
 
       {/* ────────── CONNECTION POOLING ────────── */}
       <h2>Connection Pooling (PgBouncer)</h2>
+      <Diagram entry={DIAGRAMS["connection-pool"]} />
       <p>PostgreSQL forks a new OS process for every connection. This takes ~10MB of RAM and takes time. You cannot have 10,000 direct connections to Postgres without crashing it.</p>
       <p><b>PgBouncer</b> sits between the app and the DB. The app opens 10,000 connections to PgBouncer. PgBouncer multiplexes them onto a small pool (e.g. 100) of real DB connections. Transaction pooling mode is the most common.</p>
 

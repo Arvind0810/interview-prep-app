@@ -52,3 +52,18 @@ details[open] summary { color: #22d3ee; }
 .prose-section ul { list-style: disc; }
 .prose-section ol { list-style: decimal; }
 .prose-section li { margin-bottom: 4px; }
+
+/* Shared diagram styling. Mermaid puts node labels in a <p> inside a foreignObject, and measures them
+   at 13px outside this stylesheet's scope. The .prose-section rules above are
+   more specific than mermaid's own .nodeLabel rule, so without this the labels
+   render at 15px inside boxes sized for 13px and every one of them is clipped. */
+.diagram-figure p,
+.diagram-figure li,
+.diagram-figure span,
+.prose-section .diagram-figure p,
+.prose-section .diagram-figure li {
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+}
+.diagram-figure svg { max-width: 100%; height: auto; }

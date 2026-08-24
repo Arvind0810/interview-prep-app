@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { QBANK } from "@/data/questions";
+import { diagramFor } from "@/data/diagrams";
+import Diagram from "@/components/Diagram";
 
 const TOPICS = ["All", "PHP", "Laravel", "Go", "Node", "JS", "SQL", "Redis", "Docker", "API", "Next/React", "SysDesign", "Behavioral", "Fintech"];
 const DIFFS = ["All", "easy", "med", "hard"];
@@ -10,6 +12,8 @@ export default function QBankPage() {
   const [diff, setDiff] = useState("All");
   const [search, setSearch] = useState("");
   const [reviewed, setReviewed] = useState(new Set());
+  const [openIds, setOpenIds] = useState(new Set());
+  const [diagramsOnly, setDiagramsOnly] = useState(false);
 
   useEffect(() => {
     try {
@@ -29,9 +33,19 @@ export default function QBankPage() {
   const list = QBANK.map((q, idx) => ({ ...q, idx })).filter((q) => {
     if (topic !== "All" && q.t !== topic) return false;
     if (diff !== "All" && q.d !== diff) return false;
+    if (diagramsOnly && !q.dia) return false;
     if (search && !(q.q.toLowerCase().includes(search.toLowerCase()) || q.a.toLowerCase().includes(search.toLowerCase()))) return false;
     return true;
   });
+
+  const onToggle = (idx, isOpen) => {
+    setOpenIds((prev) => {
+      const nextOpen = new Set(prev);
+      if (isOpen) nextOpen.add(idx);
+      else nextOpen.delete(idx);
+      return nextOpen;
+    });
+  };
 
   const diffColor = (d) => (d === "easy" ? "text-emerald-400" : d === "med" ? "text-amber-400" : "text-red-400");
 
@@ -68,6 +82,12 @@ export default function QBankPage() {
             {d}
           </button>
         ))}
+        <button
+          onClick={() => setDiagramsOnly((v) => !v)}
+          className={`px-3 py-1 rounded-full text-xs border ml-2 ${diagramsOnly ? "bg-violet-500 text-slate-900 border-violet-500" : "bg-panel border-border text-slate-200"}`}
+        >
+          ◫ With diagram
+        </button>
       </div>
 
       <p className="text-xs text-slate-400">{list.length} of {QBANK.length} questions shown • {reviewed.size} reviewed</p>
@@ -76,13 +96,18 @@ export default function QBankPage() {
         <p className="text-slate-400 mt-4">No questions match your filters.</p>
       ) : (
         list.map((q) => (
-          <details key={q.idx} open={reviewed.has(q.idx)}>
+          <details key={q.idx} open={reviewed.has(q.idx)} onToggle={(e) => onToggle(q.idx, e.currentTarget.open)}>
             <summary>
               <span className="text-[11px] bg-slate-700 px-2 py-0.5 rounded mr-2">{q.t}</span>
               <span className={`text-[11px] font-bold uppercase mr-2 ${diffColor(q.d)}`}>{q.d}</span>
               {q.q}
+              {q.dia && <span className="text-[11px] text-violet-400 ml-2" title="Has a diagram">◫</span>}
             </summary>
             <p className="mt-2">{q.a}</p>
+            {q.dia && (openIds.has(q.idx) || reviewed.has(q.idx)) && (() => {
+              const diagram = diagramFor(q.dia);
+              return <Diagram entry={diagram} />;
+            })()}
             <button
               onClick={() => toggleReviewed(q.idx)}
               className="mt-2 px-3 py-1 text-sm border border-border rounded text-slate-200 hover:border-accent"

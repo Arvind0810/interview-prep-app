@@ -1,3 +1,6 @@
+import Diagram from "@/components/Diagram";
+import { DIAGRAMS } from "@/data/diagrams";
+
 export const metadata = { title: "Redis & Caching — Interview Prep" };
 
 export default function RedisPage() {
@@ -12,6 +15,7 @@ export default function RedisPage() {
 
       {/* ────────── DATA STRUCTURES ────────── */}
       <h2>Data Structures</h2>
+      <Diagram entry={DIAGRAMS["redis-structures"]} />
       <p>Redis is not just a key-value store; it&apos;s a data structure server.</p>
       <table>
         <thead><tr><th>Type</th><th>Commands</th><th>Use case</th></tr></thead>
@@ -30,6 +34,7 @@ export default function RedisPage() {
 
       {/* ────────── CACHING PATTERNS ────────── */}
       <h2>Caching Patterns</h2>
+      <Diagram entry={DIAGRAMS["caching-strategies"]} />
       
       <h3>1. Cache-Aside (Lazy Loading) — your pattern</h3>
       <p>The application is responsible for reading and writing to both storage and cache. Best for general read-heavy workloads.</p>
@@ -75,6 +80,7 @@ export default function RedisPage() {
 
       {/* ────────── PITFALLS ────────── */}
       <h2>Common Caching Pitfalls</h2>
+      <Diagram entry={DIAGRAMS["cache-stampede"]} />
       <ul>
         <li><b>Cache Stampede (Thundering Herd):</b> A hot key (e.g., homepage data) expires. Suddenly 1,000 requests hit the DB at once, bringing it down. 
           <br/><i>Solution:</i> Use a Mutex (single-flight) so only one request queries the DB while others wait, or use probabilistic early expiration (refresh slightly before expiry).

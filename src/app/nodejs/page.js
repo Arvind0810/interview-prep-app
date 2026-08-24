@@ -1,3 +1,6 @@
+import Diagram from "@/components/Diagram";
+import { DIAGRAMS } from "@/data/diagrams";
+
 export const metadata = { title: "Node.js & NestJS — Interview Prep" };
 
 export default function NodejsPage() {
@@ -8,6 +11,7 @@ export default function NodejsPage() {
 
       {/* ────────── EVENT LOOP ────────── */}
       <h2>The Event Loop — Deep Dive</h2>
+      <Diagram entry={DIAGRAMS["node-event-loop-phases"]} />
       <p>Node is single-threaded but non-blocking. The event loop is what allows Node.js to perform non-blocking I/O operations by offloading operations to the system kernel whenever possible. It runs in phases.</p>
       
       <h3>Phases of the Event Loop</h3>
@@ -239,6 +243,7 @@ processor.on('order:failed', (order, err) => alertOps(order, err));`}</code></pr
 
       {/* ────────── PERFORMANCE ────────── */}
       <h2>Performance &amp; Scaling</h2>
+      <Diagram entry={DIAGRAMS["node-blocking"]} />
       
       <h3>Worker Threads vs Child Processes vs Cluster</h3>
       <ul>

@@ -1,3 +1,6 @@
+import Diagram from "@/components/Diagram";
+import { DIAGRAMS } from "@/data/diagrams";
+
 export const metadata = { title: "Next.js & React — Interview Prep" };
 
 export default function NextjsPage() {
@@ -8,6 +11,8 @@ export default function NextjsPage() {
 
       {/* ────────── REACT INTERNALS ────────── */}
       <h2>React Internals &amp; Lifecycle</h2>
+      <Diagram entry={DIAGRAMS["render-cycle"]} />
+      <Diagram entry={DIAGRAMS["keys-reconciliation"]} />
       <ul>
         <li><b>The Virtual DOM:</b> A lightweight JavaScript representation of the actual DOM. React updates the VDOM first, compares it to a snapshot of the previous VDOM (<b>Reconciliation/Diffing</b>), and calculates the minimal set of changes needed. It then applies these changes to the real DOM in one batch.</li>
         <li><b>Keys in Lists:</b> When rendering arrays, React uses the <code>key</code> prop to identify which items have changed, been added, or been removed. <b>Never use array indices as keys</b> for lists that can re-order, as it breaks state mapping and hurts performance.</li>
@@ -22,6 +27,7 @@ export default function NextjsPage() {
 
       {/* ────────── REACT HOOKS ────────── */}
       <h2>Core React Hooks</h2>
+      <Diagram entry={DIAGRAMS["useeffect-lifecycle"]} />
       <table>
         <thead><tr><th>Hook</th><th>Use Case</th><th>Pitfalls</th></tr></thead>
         <tbody>
@@ -37,6 +43,7 @@ export default function NextjsPage() {
 
       {/* ────────── NEXT.JS RENDERING MODES ────────── */}
       <h2>Next.js Rendering Strategies</h2>
+      <Diagram entry={DIAGRAMS["rendering-strategies"]} />
       <p>Next.js solves React's biggest flaw (Client-Side Rendering latency and poor SEO) by moving rendering to the server.</p>
       
       <table>
@@ -51,6 +58,7 @@ export default function NextjsPage() {
 
       {/* ────────── APP ROUTER VS PAGES ROUTER ────────── */}
       <h2>App Router &amp; React Server Components (RSC)</h2>
+      <Diagram entry={DIAGRAMS["rsc-boundary"]} />
       <p>Next.js 13+ introduced the App Router (<code>app/</code> directory), built entirely around React Server Components.</p>
       
       <h3>Server Components (Default)</h3>
@@ -67,6 +75,7 @@ export default function NextjsPage() {
 
       {/* ────────── COMMON PITFALLS ────────── */}
       <h2>Common Interview Pitfalls</h2>
+      <Diagram entry={DIAGRAMS["hydration-timeline"]} />
       <details><summary>Hydration Errors</summary>
         <p><b>What is it?</b> Hydration is the process of attaching event listeners to server-rendered HTML. A hydration error occurs when the HTML generated on the server doesn't exactly match the HTML generated on the client's first render.</p>
         <p><b>Causes:</b> Using <code>Date.now()</code>, <code>Math.random()</code>, or checking <code>typeof window !== 'undefined'</code> during render. Browser extensions modifying the DOM before hydration.</p>
