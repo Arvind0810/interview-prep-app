@@ -29,6 +29,7 @@ const NAV = [
   { group: "Practice", items: [
     { href: "/qbank", label: "Question Bank (330+)" },
     { href: "/quiz", label: "Skill Test (Quizzes)" },
+    { href: "/leetcode", label: "LeetCode Challenges" },
     { href: "/behavioral", label: "Behavioral & STAR" },
     { href: "/improvement", label: "Improvement Plan" },
   ]},
