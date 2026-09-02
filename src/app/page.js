@@ -42,7 +42,7 @@ export default function DashboardPage() {
       <Card>
         <h3>Your Resume Snapshot (corrected)</h3>
         <p>
-          <b>Role:</b> Full-Stack Software Engineer • 5+ years
+          <b>Role:</b> Full-Stack Software Engineer • 6 years
           <br />
           <b>Current:</b> Software Engineer @ NeoSOFT Technologies (Client: 1Finance) • Jan 2023–Present
           <br />
