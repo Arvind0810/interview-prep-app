@@ -4,6 +4,8 @@ const jsChallenges = [
     id: 1,
     title: "Two Sum",
     slug: "two-sum",
+    description:
+      "Given an array of integers and a target value, return the indices of the two numbers that add up to the target. Exactly one valid answer exists and the same element may not be used twice.",
     difficulty: "easy",
     pattern: "Hash Map",
     topics: ["Array", "Hash Table"],
@@ -24,6 +26,8 @@ const jsChallenges = [
     id: 242,
     title: "Valid Anagram",
     slug: "valid-anagram",
+    description:
+      "Given two strings s and t, return true if t is an anagram of s — the same characters with the same counts.",
     difficulty: "easy",
     pattern: "Frequency Count",
     topics: ["Hash Table", "String", "Sorting"],
@@ -45,6 +49,8 @@ const jsChallenges = [
     id: 49,
     title: "Group Anagrams",
     slug: "group-anagrams",
+    description:
+      "Group the strings that are anagrams of one another. The groups, and the strings within them, may be returned in any order.",
     difficulty: "med",
     pattern: "Hash Map + Canonical Key",
     topics: ["Hash Table", "String", "Sorting"],
@@ -68,6 +74,7 @@ const jsChallenges = [
     id: 347,
     title: "Top K Frequent Elements",
     slug: "top-k-frequent-elements",
+    description: "Return the k most frequent elements of the array, in any order.",
     difficulty: "med",
     pattern: "Bucket Sort",
     topics: ["Array", "Hash Table", "Heap", "Bucket Sort"],
@@ -95,6 +102,8 @@ const jsChallenges = [
     id: 238,
     title: "Product of Array Except Self",
     slug: "product-of-array-except-self",
+    description:
+      "Return an array in which answer[i] is the product of every element of nums except nums[i]. Solve it without using division.",
     difficulty: "med",
     pattern: "Prefix / Suffix Products",
     topics: ["Array", "Prefix Sum"],
@@ -120,6 +129,8 @@ const jsChallenges = [
     id: 128,
     title: "Longest Consecutive Sequence",
     slug: "longest-consecutive-sequence",
+    description:
+      "Return the length of the longest run of consecutive integers present in the unsorted array. The solution must run in O(n) time.",
     difficulty: "med",
     pattern: "Hash Set",
     topics: ["Array", "Hash Table", "Union Find"],
@@ -142,6 +153,8 @@ const jsChallenges = [
     id: 125,
     title: "Valid Palindrome",
     slug: "valid-palindrome",
+    description:
+      "A phrase is a palindrome if, after lowercasing and removing every non-alphanumeric character, it reads the same forwards and backwards. Return whether the given string is one.",
     difficulty: "easy",
     pattern: "Two Pointers",
     topics: ["Two Pointers", "String"],
@@ -167,6 +180,8 @@ function isPalindrome(s) {
     id: 167,
     title: "Two Sum II — Input Array Is Sorted",
     slug: "two-sum-ii-input-array-is-sorted",
+    description:
+      "The array is sorted in non-decreasing order. Find the two numbers that add up to the target and return their positions as 1-indexed values, using only constant extra space.",
     difficulty: "med",
     pattern: "Two Pointers",
     topics: ["Array", "Two Pointers", "Binary Search"],
@@ -189,6 +204,8 @@ function isPalindrome(s) {
     id: 15,
     title: "3Sum",
     slug: "3sum",
+    description:
+      "Return all unique triplets in the array that sum to zero. The result must not contain duplicate triplets.",
     difficulty: "med",
     pattern: "Sort + Two Pointers",
     topics: ["Array", "Two Pointers", "Sorting"],
@@ -221,6 +238,8 @@ function isPalindrome(s) {
     id: 11,
     title: "Container With Most Water",
     slug: "container-with-most-water",
+    description:
+      "Each height[i] is a vertical line drawn at position i. Pick the two lines that together with the x-axis hold the most water, and return that area.",
     difficulty: "med",
     pattern: "Two Pointers",
     topics: ["Array", "Two Pointers", "Greedy"],
@@ -243,6 +262,8 @@ function isPalindrome(s) {
     id: 42,
     title: "Trapping Rain Water",
     slug: "trapping-rain-water",
+    description:
+      "Given an elevation map where each bar has width 1, compute how much rainwater is trapped between the bars after it rains.",
     difficulty: "hard",
     pattern: "Two Pointers",
     topics: ["Array", "Two Pointers", "Stack", "Dynamic Programming"],
@@ -273,6 +294,8 @@ function isPalindrome(s) {
     id: 121,
     title: "Best Time to Buy and Sell Stock",
     slug: "best-time-to-buy-and-sell-stock",
+    description:
+      "prices[i] is the price of a stock on day i. Choose one day to buy and a later day to sell, and return the largest profit achievable, or 0 if no profit is possible.",
     difficulty: "easy",
     pattern: "Greedy / One Pass",
     topics: ["Array", "Dynamic Programming"],
@@ -293,6 +316,8 @@ function isPalindrome(s) {
     id: 3,
     title: "Longest Substring Without Repeating Characters",
     slug: "longest-substring-without-repeating-characters",
+    description:
+      "Return the length of the longest substring of s that contains no repeated character.",
     difficulty: "med",
     pattern: "Sliding Window",
     topics: ["Hash Table", "String", "Sliding Window"],
@@ -316,6 +341,8 @@ function isPalindrome(s) {
     id: 424,
     title: "Longest Repeating Character Replacement",
     slug: "longest-repeating-character-replacement",
+    description:
+      "You may change at most k characters of s to any other uppercase letter. Return the length of the longest substring of a single repeated letter obtainable.",
     difficulty: "med",
     pattern: "Sliding Window",
     topics: ["Hash Table", "String", "Sliding Window"],
@@ -343,6 +370,8 @@ function isPalindrome(s) {
     id: 567,
     title: "Permutation in String",
     slug: "permutation-in-string",
+    description:
+      "Return true if s2 contains a permutation of s1 — that is, if one of s1's permutations appears as a substring of s2.",
     difficulty: "med",
     pattern: "Fixed Sliding Window",
     topics: ["Hash Table", "Two Pointers", "String", "Sliding Window"],
@@ -381,6 +410,8 @@ function isPalindrome(s) {
     id: 20,
     title: "Valid Parentheses",
     slug: "valid-parentheses",
+    description:
+      "Given a string containing only the brackets ()[]{}, return true if every bracket is closed by one of the same type and in the correct order.",
     difficulty: "easy",
     pattern: "Stack",
     topics: ["String", "Stack"],
@@ -404,6 +435,8 @@ function isPalindrome(s) {
     id: 155,
     title: "Min Stack",
     slug: "min-stack",
+    description:
+      "Design a stack that supports push, pop, top and retrieving the current minimum element, each in constant time.",
     difficulty: "med",
     pattern: "Auxiliary Stack",
     topics: ["Stack", "Design"],
@@ -436,6 +469,8 @@ function isPalindrome(s) {
     id: 150,
     title: "Evaluate Reverse Polish Notation",
     slug: "evaluate-reverse-polish-notation",
+    description:
+      "Evaluate an arithmetic expression written in Reverse Polish Notation using the operators + - * /. Division truncates toward zero.",
     difficulty: "med",
     pattern: "Stack",
     topics: ["Array", "Math", "Stack"],
@@ -466,6 +501,8 @@ function isPalindrome(s) {
     id: 739,
     title: "Daily Temperatures",
     slug: "daily-temperatures",
+    description:
+      "For each day, report how many days you have to wait for a warmer temperature. Put 0 where no warmer day follows.",
     difficulty: "med",
     pattern: "Monotonic Stack",
     topics: ["Array", "Stack", "Monotonic Stack"],
@@ -489,6 +526,8 @@ function isPalindrome(s) {
     id: 704,
     title: "Binary Search",
     slug: "binary-search",
+    description:
+      "Given a sorted array of distinct integers and a target, return the index of the target or -1 if it is absent. Must run in O(log n) time.",
     difficulty: "easy",
     pattern: "Binary Search",
     topics: ["Array", "Binary Search"],
@@ -511,6 +550,8 @@ function isPalindrome(s) {
     id: 74,
     title: "Search a 2D Matrix",
     slug: "search-a-2d-matrix",
+    description:
+      "Every row of the matrix is sorted ascending and the first value of each row is greater than the last value of the row above. Return whether the target is present, in O(log(m*n)) time.",
     difficulty: "med",
     pattern: "Binary Search",
     topics: ["Array", "Binary Search", "Matrix"],
@@ -536,6 +577,8 @@ function isPalindrome(s) {
     id: 875,
     title: "Koko Eating Bananas",
     slug: "koko-eating-bananas",
+    description:
+      "Koko eats bananas from one pile at a time at k bananas per hour. Return the smallest k that lets her finish every pile within h hours.",
     difficulty: "med",
     pattern: "Binary Search on Answer",
     topics: ["Array", "Binary Search"],
@@ -560,6 +603,8 @@ function isPalindrome(s) {
     id: 153,
     title: "Find Minimum in Rotated Sorted Array",
     slug: "find-minimum-in-rotated-sorted-array",
+    description:
+      "A sorted array of unique values has been rotated an unknown number of times. Return its minimum element in O(log n) time.",
     difficulty: "med",
     pattern: "Binary Search",
     topics: ["Array", "Binary Search"],
@@ -581,6 +626,7 @@ function isPalindrome(s) {
     id: 206,
     title: "Reverse Linked List",
     slug: "reverse-linked-list",
+    description: "Reverse a singly linked list and return the head of the reversed list.",
     difficulty: "easy",
     pattern: "Linked List Pointers",
     topics: ["Linked List", "Recursion"],
@@ -603,6 +649,8 @@ function isPalindrome(s) {
     id: 21,
     title: "Merge Two Sorted Lists",
     slug: "merge-two-sorted-lists",
+    description:
+      "Splice two sorted linked lists together into a single sorted list and return its head.",
     difficulty: "easy",
     pattern: "Dummy Head",
     topics: ["Linked List", "Recursion"],
@@ -630,6 +678,8 @@ function isPalindrome(s) {
     id: 143,
     title: "Reorder List",
     slug: "reorder-list",
+    description:
+      "Reorder the list L0 -> L1 -> ... -> Ln into L0 -> Ln -> L1 -> Ln-1 -> ... by relinking nodes. Node values may not be modified.",
     difficulty: "med",
     pattern: "Split + Reverse + Merge",
     topics: ["Linked List", "Two Pointers", "Stack"],
@@ -672,6 +722,8 @@ function isPalindrome(s) {
     id: 19,
     title: "Remove Nth Node From End of List",
     slug: "remove-nth-node-from-end-of-list",
+    description:
+      "Remove the nth node counting from the end of a singly linked list and return the head of the list.",
     difficulty: "med",
     pattern: "Fast & Slow Pointers",
     topics: ["Linked List", "Two Pointers"],
@@ -695,6 +747,8 @@ function isPalindrome(s) {
     id: 138,
     title: "Copy List with Random Pointer",
     slug: "copy-list-with-random-pointer",
+    description:
+      "Each node of the list has a next pointer and a random pointer that may target any node in the list or null. Return a deep copy of the list.",
     difficulty: "med",
     pattern: "Hash Map Two-Pass",
     topics: ["Hash Table", "Linked List"],
@@ -720,6 +774,8 @@ function isPalindrome(s) {
     id: 146,
     title: "LRU Cache",
     slug: "lru-cache",
+    description:
+      "Design a cache with a fixed capacity supporting get and put in O(1) average time, evicting the least recently used key when the capacity is exceeded.",
     difficulty: "med",
     pattern: "Hash Map + Ordering",
     topics: ["Hash Table", "Linked List", "Design"],
@@ -751,6 +807,8 @@ function isPalindrome(s) {
     id: 226,
     title: "Invert Binary Tree",
     slug: "invert-binary-tree",
+    description:
+      "Swap the left and right child of every node in the binary tree, then return the root of the inverted tree.",
     difficulty: "easy",
     pattern: "Tree Recursion",
     topics: ["Tree", "DFS", "BFS", "Binary Tree"],
@@ -766,6 +824,8 @@ function isPalindrome(s) {
     id: 104,
     title: "Maximum Depth of Binary Tree",
     slug: "maximum-depth-of-binary-tree",
+    description:
+      "Return the maximum depth of a binary tree — the number of nodes along the longest path from the root down to a leaf.",
     difficulty: "easy",
     pattern: "Tree Recursion",
     topics: ["Tree", "DFS", "BFS", "Binary Tree"],
@@ -780,6 +840,8 @@ function isPalindrome(s) {
     id: 543,
     title: "Diameter of Binary Tree",
     slug: "diameter-of-binary-tree",
+    description:
+      "Return the diameter of a binary tree: the number of edges on the longest path between any two nodes. The path need not pass through the root.",
     difficulty: "easy",
     pattern: "Tree DFS with Side Effect",
     topics: ["Tree", "DFS", "Binary Tree"],
@@ -803,6 +865,8 @@ function isPalindrome(s) {
     id: 110,
     title: "Balanced Binary Tree",
     slug: "balanced-binary-tree",
+    description:
+      "Return true if the binary tree is height-balanced: for every node, the depths of its two subtrees differ by at most one.",
     difficulty: "easy",
     pattern: "Tree DFS with Early Exit",
     topics: ["Tree", "DFS", "Binary Tree"],
@@ -826,6 +890,8 @@ function isPalindrome(s) {
     id: 102,
     title: "Binary Tree Level Order Traversal",
     slug: "binary-tree-level-order-traversal",
+    description:
+      "Return the values of the tree node by node, level by level, from left to right, as a list of levels.",
     difficulty: "med",
     pattern: "BFS",
     topics: ["Tree", "BFS", "Binary Tree"],
@@ -854,6 +920,8 @@ function isPalindrome(s) {
     id: 98,
     title: "Validate Binary Search Tree",
     slug: "validate-binary-search-tree",
+    description:
+      "Return true if the binary tree is a valid BST: every value in a node's left subtree is strictly smaller, every value in its right subtree strictly larger, and both subtrees are themselves valid.",
     difficulty: "med",
     pattern: "DFS with Bounds",
     topics: ["Tree", "DFS", "BST", "Binary Tree"],
@@ -873,6 +941,7 @@ function isPalindrome(s) {
     id: 230,
     title: "Kth Smallest Element in a BST",
     slug: "kth-smallest-element-in-a-bst",
+    description: "Return the kth smallest value in a binary search tree, counting from 1.",
     difficulty: "med",
     pattern: "In-order Traversal",
     topics: ["Tree", "DFS", "BST", "Binary Tree"],
@@ -898,6 +967,8 @@ function isPalindrome(s) {
     id: 208,
     title: "Implement Trie (Prefix Tree)",
     slug: "implement-trie-prefix-tree",
+    description:
+      "Implement a trie (prefix tree) supporting insert, search for a whole word, and startsWith for a prefix.",
     difficulty: "med",
     pattern: "Trie",
     topics: ["Hash Table", "String", "Design", "Trie"],
@@ -939,6 +1010,8 @@ function isPalindrome(s) {
     id: 200,
     title: "Number of Islands",
     slug: "number-of-islands",
+    description:
+      "Given a grid of '1' (land) and '0' (water), count the islands — groups of land cells connected horizontally or vertically.",
     difficulty: "med",
     pattern: "Grid DFS / Flood Fill",
     topics: ["Array", "DFS", "BFS", "Union Find", "Matrix"],
@@ -975,6 +1048,8 @@ function isPalindrome(s) {
     id: 133,
     title: "Clone Graph",
     slug: "clone-graph",
+    description:
+      "Given a reference to a node in a connected undirected graph, return a deep copy (clone) of the entire graph.",
     difficulty: "med",
     pattern: "DFS + Hash Map",
     topics: ["Hash Table", "DFS", "BFS", "Graph"],
@@ -998,6 +1073,8 @@ function isPalindrome(s) {
     id: 207,
     title: "Course Schedule",
     slug: "course-schedule",
+    description:
+      "There are numCourses courses and prerequisite pairs [a, b] meaning course b must be taken before course a. Return whether it is possible to finish every course.",
     difficulty: "med",
     pattern: "Topological Sort (Kahn)",
     topics: ["DFS", "BFS", "Graph", "Topological Sort"],
@@ -1030,6 +1107,8 @@ function isPalindrome(s) {
     id: 70,
     title: "Climbing Stairs",
     slug: "climbing-stairs",
+    description:
+      "You climb either 1 or 2 steps at a time. Return the number of distinct ways to reach the top of a staircase with n steps.",
     difficulty: "easy",
     pattern: "DP / Fibonacci",
     topics: ["Math", "Dynamic Programming", "Memoization"],
@@ -1049,6 +1128,8 @@ function isPalindrome(s) {
     id: 198,
     title: "House Robber",
     slug: "house-robber",
+    description:
+      "Each house on the street holds some money, but robbing two adjacent houses sets off the alarm. Return the maximum amount you can rob tonight.",
     difficulty: "med",
     pattern: "Dynamic Programming",
     topics: ["Array", "Dynamic Programming"],
@@ -1068,6 +1149,8 @@ function isPalindrome(s) {
     id: 322,
     title: "Coin Change",
     slug: "coin-change",
+    description:
+      "Given coin denominations and a target amount, return the fewest coins needed to make that amount, or -1 if it cannot be made. Each denomination is available in unlimited supply.",
     difficulty: "med",
     pattern: "Unbounded Knapsack DP",
     topics: ["Array", "Dynamic Programming", "BFS"],
@@ -1089,6 +1172,8 @@ function isPalindrome(s) {
     id: 300,
     title: "Longest Increasing Subsequence",
     slug: "longest-increasing-subsequence",
+    description:
+      "Return the length of the longest strictly increasing subsequence. The chosen elements need not be adjacent.",
     difficulty: "med",
     pattern: "Patience Sorting + Binary Search",
     topics: ["Array", "Binary Search", "Dynamic Programming"],
@@ -1114,6 +1199,8 @@ function isPalindrome(s) {
     id: 139,
     title: "Word Break",
     slug: "word-break",
+    description:
+      "Return true if s can be segmented into a sequence of one or more dictionary words. A word from the dictionary may be reused any number of times.",
     difficulty: "med",
     pattern: "Dynamic Programming",
     topics: ["Hash Table", "String", "Dynamic Programming", "Trie"],
@@ -1139,6 +1226,7 @@ function isPalindrome(s) {
     id: 53,
     title: "Maximum Subarray",
     slug: "maximum-subarray",
+    description: "Find the contiguous subarray with the largest sum and return that sum.",
     difficulty: "med",
     pattern: "Kadane's Algorithm",
     topics: ["Array", "Dynamic Programming", "Divide and Conquer"],
@@ -1159,6 +1247,8 @@ function isPalindrome(s) {
     id: 55,
     title: "Jump Game",
     slug: "jump-game",
+    description:
+      "nums[i] is the maximum jump length from index i. Starting at index 0, return whether you can reach the last index.",
     difficulty: "med",
     pattern: "Greedy",
     topics: ["Array", "Dynamic Programming", "Greedy"],
@@ -1178,6 +1268,8 @@ function isPalindrome(s) {
     id: 56,
     title: "Merge Intervals",
     slug: "merge-intervals",
+    description:
+      "Merge every set of overlapping intervals and return the non-overlapping intervals that cover exactly the same span.",
     difficulty: "med",
     pattern: "Sort + Sweep",
     topics: ["Array", "Sorting"],
@@ -1199,6 +1291,8 @@ function isPalindrome(s) {
     id: 57,
     title: "Insert Interval",
     slug: "insert-interval",
+    description:
+      "Given a list of sorted, non-overlapping intervals, insert a new interval — merging where it overlaps — and return the resulting list.",
     difficulty: "med",
     pattern: "Sorted Sweep",
     topics: ["Array"],
@@ -1227,6 +1321,8 @@ function isPalindrome(s) {
     id: 78,
     title: "Subsets",
     slug: "subsets",
+    description:
+      "Return all possible subsets (the power set) of an array of unique integers. The subsets may be returned in any order.",
     difficulty: "med",
     pattern: "Backtracking",
     topics: ["Array", "Backtracking", "Bit Manipulation"],

@@ -38,6 +38,8 @@ export default function LeetCodePage() {
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
   const [solved, setSolved] = useState(new Set());
+  // Solutions stay hidden until asked for, so the problem can be attempted first.
+  const [revealed, setRevealed] = useState(new Set());
 
   useEffect(() => {
     try {
@@ -53,6 +55,15 @@ export default function LeetCodePage() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify([...next]));
       } catch {}
+      return next;
+    });
+  };
+
+  const toggleRevealed = (key) => {
+    setRevealed((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
       return next;
     });
   };
@@ -91,8 +102,8 @@ export default function LeetCodePage() {
     <>
       <h1>LeetCode Challenges ({CHALLENGES.length})</h1>
       <p>
-        Curated problems solved in Go, JavaScript and SQL. Filter by language and difficulty,
-        expand a problem for the approach and full solution, and mark it solved to track progress.
+        Curated problems solved in Go, JavaScript and SQL. Expand a problem to read what it asks,
+        try it yourself, then hit <em>Show solution</em> for the approach and the full code.
       </p>
 
       <input
@@ -174,25 +185,23 @@ export default function LeetCodePage() {
             </summary>
 
             <div className="flex flex-wrap gap-2 items-center mt-2">
-              <span className="text-[11px] bg-slate-700 text-slate-100 px-2 py-0.5 rounded">
-                {c.pattern}
-              </span>
               {c.topics.map((t) => (
                 <span key={t} className="text-[11px] text-slate-400 border border-border px-2 py-0.5 rounded">
                   {t}
                 </span>
               ))}
-              <span className="text-[11px] text-slate-400">
-                Time <code>{c.complexity.time}</code> • Space <code>{c.complexity.space}</code>
-              </span>
             </div>
 
-            <p className="mt-2">{c.approach}</p>
-            <pre>
-              <code>{c.code}</code>
-            </pre>
+            <p className="mt-2">{c.description}</p>
 
-            <div className="flex flex-wrap gap-3 items-center mt-2">
+            <div className="flex flex-wrap gap-3 items-center mt-3">
+              <button
+                onClick={() => toggleRevealed(c.key)}
+                aria-expanded={revealed.has(c.key)}
+                className="px-3 py-1 text-sm border border-accent rounded text-accent hover:bg-accent hover:text-slate-900"
+              >
+                {revealed.has(c.key) ? "Hide solution" : "Show solution"}
+              </button>
               <button
                 onClick={() => toggleSolved(c.key)}
                 className="px-3 py-1 text-sm border border-border rounded text-slate-200 hover:border-accent"
@@ -208,6 +217,23 @@ export default function LeetCodePage() {
                 Open on LeetCode ↗
               </a>
             </div>
+
+            {revealed.has(c.key) && (
+              <div className="mt-3 border-t border-border pt-3">
+                <div className="flex flex-wrap gap-2 items-center">
+                  <span className="text-[11px] bg-slate-700 text-slate-100 px-2 py-0.5 rounded">
+                    {c.pattern}
+                  </span>
+                  <span className="text-[11px] text-slate-400">
+                    Time <code>{c.complexity.time}</code> • Space <code>{c.complexity.space}</code>
+                  </span>
+                </div>
+                <p className="mt-2">{c.approach}</p>
+                <pre>
+                  <code>{c.code}</code>
+                </pre>
+              </div>
+            )}
           </details>
         ))
       )}

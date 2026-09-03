@@ -4,6 +4,8 @@ const goChallenges = [
     id: 1,
     title: "Two Sum",
     slug: "two-sum",
+    description:
+      "Given an array of integers and a target value, return the indices of the two numbers that add up to the target. Exactly one valid answer exists and the same element may not be used twice.",
     difficulty: "easy",
     pattern: "Hash Map",
     topics: ["Array", "Hash Table"],
@@ -25,6 +27,8 @@ const goChallenges = [
     id: 121,
     title: "Best Time to Buy and Sell Stock",
     slug: "best-time-to-buy-and-sell-stock",
+    description:
+      "prices[i] is the price of a stock on day i. Choose one day to buy and a later day to sell, and return the largest profit achievable, or 0 if no profit is possible.",
     difficulty: "easy",
     pattern: "Greedy / One Pass",
     topics: ["Array", "Dynamic Programming"],
@@ -50,6 +54,8 @@ const goChallenges = [
     id: 217,
     title: "Contains Duplicate",
     slug: "contains-duplicate",
+    description:
+      "Return true if any value appears at least twice in the array, and false if every element is distinct.",
     difficulty: "easy",
     pattern: "Hash Set",
     topics: ["Array", "Hash Table", "Sorting"],
@@ -71,6 +77,8 @@ const goChallenges = [
     id: 238,
     title: "Product of Array Except Self",
     slug: "product-of-array-except-self",
+    description:
+      "Return an array in which answer[i] is the product of every element of nums except nums[i]. Solve it without using division.",
     difficulty: "med",
     pattern: "Prefix / Suffix Products",
     topics: ["Array", "Prefix Sum"],
@@ -96,6 +104,7 @@ const goChallenges = [
     id: 53,
     title: "Maximum Subarray",
     slug: "maximum-subarray",
+    description: "Find the contiguous subarray with the largest sum and return that sum.",
     difficulty: "med",
     pattern: "Kadane's Algorithm",
     topics: ["Array", "Dynamic Programming", "Divide and Conquer"],
@@ -121,6 +130,8 @@ const goChallenges = [
     id: 152,
     title: "Maximum Product Subarray",
     slug: "maximum-product-subarray",
+    description:
+      "Find the contiguous subarray with the largest product and return that product. The array may contain negative numbers and zeros.",
     difficulty: "med",
     pattern: "Dynamic Programming",
     topics: ["Array", "Dynamic Programming"],
@@ -144,6 +155,8 @@ const goChallenges = [
     id: 153,
     title: "Find Minimum in Rotated Sorted Array",
     slug: "find-minimum-in-rotated-sorted-array",
+    description:
+      "A sorted array of unique values has been rotated an unknown number of times. Return its minimum element in O(log n) time.",
     difficulty: "med",
     pattern: "Binary Search",
     topics: ["Array", "Binary Search"],
@@ -167,6 +180,8 @@ const goChallenges = [
     id: 33,
     title: "Search in Rotated Sorted Array",
     slug: "search-in-rotated-sorted-array",
+    description:
+      "A sorted array of distinct integers has been rotated at an unknown pivot. Return the index of the target value, or -1 if it is absent. Must run in O(log n) time.",
     difficulty: "med",
     pattern: "Binary Search",
     topics: ["Array", "Binary Search"],
@@ -201,6 +216,8 @@ const goChallenges = [
     id: 15,
     title: "3Sum",
     slug: "3sum",
+    description:
+      "Return all unique triplets in the array that sum to zero. The result must not contain duplicate triplets.",
     difficulty: "med",
     pattern: "Sort + Two Pointers",
     topics: ["Array", "Two Pointers", "Sorting"],
@@ -241,6 +258,8 @@ const goChallenges = [
     id: 11,
     title: "Container With Most Water",
     slug: "container-with-most-water",
+    description:
+      "Each height[i] is a vertical line drawn at position i. Pick the two lines that together with the x-axis hold the most water, and return that area.",
     difficulty: "med",
     pattern: "Two Pointers",
     topics: ["Array", "Two Pointers", "Greedy"],
@@ -267,6 +286,8 @@ const goChallenges = [
     id: 242,
     title: "Valid Anagram",
     slug: "valid-anagram",
+    description:
+      "Given two strings s and t, return true if t is an anagram of s — the same characters with the same counts.",
     difficulty: "easy",
     pattern: "Frequency Count",
     topics: ["Hash Table", "String", "Sorting"],
@@ -294,6 +315,8 @@ const goChallenges = [
     id: 49,
     title: "Group Anagrams",
     slug: "group-anagrams",
+    description:
+      "Group the strings that are anagrams of one another. The groups, and the strings within them, may be returned in any order.",
     difficulty: "med",
     pattern: "Hash Map + Canonical Key",
     topics: ["Hash Table", "String", "Sorting"],
@@ -320,6 +343,8 @@ const goChallenges = [
     id: 125,
     title: "Valid Palindrome",
     slug: "valid-palindrome",
+    description:
+      "A phrase is a palindrome if, after lowercasing and removing every non-alphanumeric character, it reads the same forwards and backwards. Return whether the given string is one.",
     difficulty: "easy",
     pattern: "Two Pointers",
     topics: ["Two Pointers", "String"],
@@ -359,6 +384,8 @@ func lower(b byte) byte {
     id: 3,
     title: "Longest Substring Without Repeating Characters",
     slug: "longest-substring-without-repeating-characters",
+    description:
+      "Return the length of the longest substring of s that contains no repeated character.",
     difficulty: "med",
     pattern: "Sliding Window",
     topics: ["Hash Table", "String", "Sliding Window"],
@@ -384,6 +411,8 @@ func lower(b byte) byte {
     id: 424,
     title: "Longest Repeating Character Replacement",
     slug: "longest-repeating-character-replacement",
+    description:
+      "You may change at most k characters of s to any other uppercase letter. Return the length of the longest substring of a single repeated letter obtainable.",
     difficulty: "med",
     pattern: "Sliding Window",
     topics: ["Hash Table", "String", "Sliding Window"],
@@ -413,6 +442,8 @@ func lower(b byte) byte {
     id: 76,
     title: "Minimum Window Substring",
     slug: "minimum-window-substring",
+    description:
+      "Return the shortest substring of s that contains every character of t, including duplicates. Return an empty string if no such window exists.",
     difficulty: "hard",
     pattern: "Sliding Window",
     topics: ["Hash Table", "String", "Sliding Window"],
@@ -459,6 +490,8 @@ func lower(b byte) byte {
     id: 20,
     title: "Valid Parentheses",
     slug: "valid-parentheses",
+    description:
+      "Given a string containing only the brackets ()[]{}, return true if every bracket is closed by one of the same type and in the correct order.",
     difficulty: "easy",
     pattern: "Stack",
     topics: ["String", "Stack"],
@@ -486,6 +519,7 @@ func lower(b byte) byte {
     id: 5,
     title: "Longest Palindromic Substring",
     slug: "longest-palindromic-substring",
+    description: "Return the longest substring of s that is a palindrome.",
     difficulty: "med",
     pattern: "Expand Around Center",
     topics: ["String", "Dynamic Programming", "Two Pointers"],
@@ -517,6 +551,8 @@ func lower(b byte) byte {
     id: 647,
     title: "Palindromic Substrings",
     slug: "palindromic-substrings",
+    description:
+      "Count how many substrings of s are palindromes. Substrings at different start or end positions count separately even when equal.",
     difficulty: "med",
     pattern: "Expand Around Center",
     topics: ["String", "Dynamic Programming"],
@@ -543,6 +579,7 @@ func lower(b byte) byte {
     id: 206,
     title: "Reverse Linked List",
     slug: "reverse-linked-list",
+    description: "Reverse a singly linked list and return the head of the reversed list.",
     difficulty: "easy",
     pattern: "Linked List Pointers",
     topics: ["Linked List", "Recursion"],
@@ -564,6 +601,8 @@ func lower(b byte) byte {
     id: 21,
     title: "Merge Two Sorted Lists",
     slug: "merge-two-sorted-lists",
+    description:
+      "Splice two sorted linked lists together into a single sorted list and return its head.",
     difficulty: "easy",
     pattern: "Two Pointers / Dummy Head",
     topics: ["Linked List", "Recursion"],
@@ -593,6 +632,8 @@ func lower(b byte) byte {
     id: 141,
     title: "Linked List Cycle",
     slug: "linked-list-cycle",
+    description:
+      "Return true if the linked list contains a cycle — some node whose next pointer leads back to a node already visited.",
     difficulty: "easy",
     pattern: "Fast & Slow Pointers",
     topics: ["Linked List", "Two Pointers"],
@@ -615,6 +656,8 @@ func lower(b byte) byte {
     id: 19,
     title: "Remove Nth Node From End of List",
     slug: "remove-nth-node-from-end-of-list",
+    description:
+      "Remove the nth node counting from the end of a singly linked list and return the head of the list.",
     difficulty: "med",
     pattern: "Fast & Slow Pointers",
     topics: ["Linked List", "Two Pointers"],
@@ -639,6 +682,8 @@ func lower(b byte) byte {
     id: 143,
     title: "Reorder List",
     slug: "reorder-list",
+    description:
+      "Reorder the list L0 -> L1 -> ... -> Ln into L0 -> Ln -> L1 -> Ln-1 -> ... by relinking nodes. Node values may not be modified.",
     difficulty: "med",
     pattern: "Split + Reverse + Merge",
     topics: ["Linked List", "Two Pointers", "Stack"],
@@ -676,6 +721,8 @@ func lower(b byte) byte {
     id: 23,
     title: "Merge k Sorted Lists",
     slug: "merge-k-sorted-lists",
+    description:
+      "Given an array of k linked lists, each sorted ascending, merge them into one sorted linked list and return its head.",
     difficulty: "hard",
     pattern: "Divide and Conquer",
     topics: ["Linked List", "Heap", "Divide and Conquer"],
@@ -704,6 +751,8 @@ func lower(b byte) byte {
     id: 226,
     title: "Invert Binary Tree",
     slug: "invert-binary-tree",
+    description:
+      "Swap the left and right child of every node in the binary tree, then return the root of the inverted tree.",
     difficulty: "easy",
     pattern: "Tree Recursion",
     topics: ["Tree", "DFS", "BFS", "Binary Tree"],
@@ -722,6 +771,8 @@ func lower(b byte) byte {
     id: 104,
     title: "Maximum Depth of Binary Tree",
     slug: "maximum-depth-of-binary-tree",
+    description:
+      "Return the maximum depth of a binary tree — the number of nodes along the longest path from the root down to a leaf.",
     difficulty: "easy",
     pattern: "Tree Recursion",
     topics: ["Tree", "DFS", "BFS", "Binary Tree"],
@@ -739,6 +790,8 @@ func lower(b byte) byte {
     id: 100,
     title: "Same Tree",
     slug: "same-tree",
+    description:
+      "Given the roots of two binary trees, return true if they are structurally identical and every corresponding pair of nodes holds the same value.",
     difficulty: "easy",
     pattern: "Tree Recursion",
     topics: ["Tree", "DFS", "Binary Tree"],
@@ -758,6 +811,8 @@ func lower(b byte) byte {
     id: 102,
     title: "Binary Tree Level Order Traversal",
     slug: "binary-tree-level-order-traversal",
+    description:
+      "Return the values of the tree node by node, level by level, from left to right, as a list of levels.",
     difficulty: "med",
     pattern: "BFS",
     topics: ["Tree", "BFS", "Binary Tree"],
@@ -793,6 +848,8 @@ func lower(b byte) byte {
     id: 98,
     title: "Validate Binary Search Tree",
     slug: "validate-binary-search-tree",
+    description:
+      "Return true if the binary tree is a valid BST: every value in a node's left subtree is strictly smaller, every value in its right subtree strictly larger, and both subtrees are themselves valid.",
     difficulty: "med",
     pattern: "DFS with Bounds",
     topics: ["Tree", "DFS", "BST", "Binary Tree"],
@@ -820,6 +877,7 @@ func lower(b byte) byte {
     id: 230,
     title: "Kth Smallest Element in a BST",
     slug: "kth-smallest-element-in-a-bst",
+    description: "Return the kth smallest value in a binary search tree, counting from 1.",
     difficulty: "med",
     pattern: "In-order Traversal",
     topics: ["Tree", "DFS", "BST", "Binary Tree"],
@@ -849,6 +907,8 @@ func lower(b byte) byte {
     id: 235,
     title: "Lowest Common Ancestor of a BST",
     slug: "lowest-common-ancestor-of-a-binary-search-tree",
+    description:
+      "Given a binary search tree and two of its nodes, return their lowest common ancestor — the deepest node having both as descendants (a node may be a descendant of itself).",
     difficulty: "med",
     pattern: "BST Property",
     topics: ["Tree", "DFS", "BST", "Binary Tree"],
@@ -873,6 +933,8 @@ func lower(b byte) byte {
     id: 200,
     title: "Number of Islands",
     slug: "number-of-islands",
+    description:
+      "Given a grid of '1' (land) and '0' (water), count the islands — groups of land cells connected horizontally or vertically.",
     difficulty: "med",
     pattern: "Grid DFS / Flood Fill",
     topics: ["Array", "DFS", "BFS", "Union Find", "Matrix"],
@@ -911,6 +973,8 @@ func lower(b byte) byte {
     id: 133,
     title: "Clone Graph",
     slug: "clone-graph",
+    description:
+      "Given a reference to a node in a connected undirected graph, return a deep copy (clone) of the entire graph.",
     difficulty: "med",
     pattern: "DFS + Hash Map",
     topics: ["Hash Table", "DFS", "BFS", "Graph"],
@@ -941,6 +1005,8 @@ func lower(b byte) byte {
     id: 207,
     title: "Course Schedule",
     slug: "course-schedule",
+    description:
+      "There are numCourses courses and prerequisite pairs [a, b] meaning course b must be taken before course a. Return whether it is possible to finish every course.",
     difficulty: "med",
     pattern: "Topological Sort (Kahn)",
     topics: ["DFS", "BFS", "Graph", "Topological Sort"],
@@ -979,6 +1045,8 @@ func lower(b byte) byte {
     id: 417,
     title: "Pacific Atlantic Water Flow",
     slug: "pacific-atlantic-water-flow",
+    description:
+      "In a matrix of heights the Pacific borders the top and left edges and the Atlantic the bottom and right. Water flows to neighbours of equal or lower height; return every cell from which water can reach both oceans.",
     difficulty: "med",
     pattern: "Multi-source DFS",
     topics: ["Array", "DFS", "BFS", "Matrix"],
@@ -1028,6 +1096,8 @@ func lower(b byte) byte {
     id: 70,
     title: "Climbing Stairs",
     slug: "climbing-stairs",
+    description:
+      "You climb either 1 or 2 steps at a time. Return the number of distinct ways to reach the top of a staircase with n steps.",
     difficulty: "easy",
     pattern: "DP / Fibonacci",
     topics: ["Math", "Dynamic Programming", "Memoization"],
@@ -1046,6 +1116,8 @@ func lower(b byte) byte {
     id: 322,
     title: "Coin Change",
     slug: "coin-change",
+    description:
+      "Given coin denominations and a target amount, return the fewest coins needed to make that amount, or -1 if it cannot be made. Each denomination is available in unlimited supply.",
     difficulty: "med",
     pattern: "Unbounded Knapsack DP",
     topics: ["Array", "Dynamic Programming", "BFS"],
@@ -1075,6 +1147,8 @@ func lower(b byte) byte {
     id: 300,
     title: "Longest Increasing Subsequence",
     slug: "longest-increasing-subsequence",
+    description:
+      "Return the length of the longest strictly increasing subsequence. The chosen elements need not be adjacent.",
     difficulty: "med",
     pattern: "Patience Sorting + Binary Search",
     topics: ["Array", "Binary Search", "Dynamic Programming"],
@@ -1098,6 +1172,8 @@ func lower(b byte) byte {
     id: 198,
     title: "House Robber",
     slug: "house-robber",
+    description:
+      "Each house on the street holds some money, but robbing two adjacent houses sets off the alarm. Return the maximum amount you can rob tonight.",
     difficulty: "med",
     pattern: "Dynamic Programming",
     topics: ["Array", "Dynamic Programming"],
@@ -1116,6 +1192,8 @@ func lower(b byte) byte {
     id: 139,
     title: "Word Break",
     slug: "word-break",
+    description:
+      "Return true if s can be segmented into a sequence of one or more dictionary words. A word from the dictionary may be reused any number of times.",
     difficulty: "med",
     pattern: "Dynamic Programming",
     topics: ["Hash Table", "String", "Dynamic Programming", "Trie"],
@@ -1144,6 +1222,8 @@ func lower(b byte) byte {
     id: 62,
     title: "Unique Paths",
     slug: "unique-paths",
+    description:
+      "A robot starts at the top-left of an m x n grid and may only move right or down. Return how many distinct paths reach the bottom-right corner.",
     difficulty: "med",
     pattern: "Grid DP",
     topics: ["Math", "Dynamic Programming", "Combinatorics"],
@@ -1167,6 +1247,8 @@ func lower(b byte) byte {
     id: 39,
     title: "Combination Sum",
     slug: "combination-sum",
+    description:
+      "Given an array of distinct candidate numbers and a target, return every unique combination that sums to the target. The same candidate may be reused any number of times.",
     difficulty: "med",
     pattern: "Backtracking",
     topics: ["Array", "Backtracking"],
@@ -1199,6 +1281,8 @@ func lower(b byte) byte {
     id: 78,
     title: "Subsets",
     slug: "subsets",
+    description:
+      "Return all possible subsets (the power set) of an array of unique integers. The subsets may be returned in any order.",
     difficulty: "med",
     pattern: "Backtracking",
     topics: ["Array", "Backtracking", "Bit Manipulation"],
@@ -1225,6 +1309,7 @@ func lower(b byte) byte {
     id: 347,
     title: "Top K Frequent Elements",
     slug: "top-k-frequent-elements",
+    description: "Return the k most frequent elements of the array, in any order.",
     difficulty: "med",
     pattern: "Bucket Sort",
     topics: ["Array", "Hash Table", "Heap", "Bucket Sort"],
@@ -1256,6 +1341,8 @@ func lower(b byte) byte {
     id: 56,
     title: "Merge Intervals",
     slug: "merge-intervals",
+    description:
+      "Merge every set of overlapping intervals and return the non-overlapping intervals that cover exactly the same span.",
     difficulty: "med",
     pattern: "Sort + Sweep",
     topics: ["Array", "Sorting"],
@@ -1284,6 +1371,8 @@ func lower(b byte) byte {
     id: 57,
     title: "Insert Interval",
     slug: "insert-interval",
+    description:
+      "Given a list of sorted, non-overlapping intervals, insert a new interval — merging where it overlaps — and return the resulting list.",
     difficulty: "med",
     pattern: "Sorted Sweep",
     topics: ["Array"],
@@ -1310,6 +1399,8 @@ func lower(b byte) byte {
     id: 435,
     title: "Non-overlapping Intervals",
     slug: "non-overlapping-intervals",
+    description:
+      "Return the minimum number of intervals to remove so that none of the remaining intervals overlap.",
     difficulty: "med",
     pattern: "Greedy Interval Scheduling",
     topics: ["Array", "Greedy", "Sorting"],
@@ -1335,6 +1426,8 @@ func lower(b byte) byte {
     id: 73,
     title: "Set Matrix Zeroes",
     slug: "set-matrix-zeroes",
+    description:
+      "If any element of an m x n matrix is 0, set its entire row and column to 0. Do it in place.",
     difficulty: "med",
     pattern: "In-place Marking",
     topics: ["Array", "Hash Table", "Matrix"],
@@ -1370,6 +1463,8 @@ func lower(b byte) byte {
     id: 48,
     title: "Rotate Image",
     slug: "rotate-image",
+    description:
+      "Rotate an n x n matrix 90 degrees clockwise, in place — you may not allocate a second matrix.",
     difficulty: "med",
     pattern: "Transpose + Reverse",
     topics: ["Array", "Math", "Matrix"],
@@ -1394,6 +1489,8 @@ func lower(b byte) byte {
     id: 128,
     title: "Longest Consecutive Sequence",
     slug: "longest-consecutive-sequence",
+    description:
+      "Return the length of the longest run of consecutive integers present in the unsorted array. The solution must run in O(n) time.",
     difficulty: "med",
     pattern: "Hash Set",
     topics: ["Array", "Hash Table", "Union Find"],
@@ -1428,6 +1525,8 @@ func lower(b byte) byte {
     id: 55,
     title: "Jump Game",
     slug: "jump-game",
+    description:
+      "nums[i] is the maximum jump length from index i. Starting at index 0, return whether you can reach the last index.",
     difficulty: "med",
     pattern: "Greedy",
     topics: ["Array", "Dynamic Programming", "Greedy"],
