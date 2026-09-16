@@ -34,6 +34,7 @@ const NAV = [
     { href: "/improvement", label: "Improvement Plan" },
   ]},
   { group: "Organizations", items: [
+    { href: "/organizations/virtusa-devops-golang", label: "Virtusa (DevOps + Golang)" },
     { href: "/organizations/icici-lombard", label: "ICICI Lombard (Sr. Backend)" },
     { href: "/organizations/custom-software-engineer", label: "Custom Software Engineer" },
     { href: "/organizations/software-engineer-pm", label: "Software Engineer + PM (Fintech)" },
