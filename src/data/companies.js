@@ -4,6 +4,29 @@
 
 export const COMPANIES = [
   {
+    slug: "golang-react-fullstack-thane",
+    company: "BFSI product team (Thane)",
+    role: "GoLang & React Full Stack Developer",
+    meta: "On-site, Thane (Mumbai) · 3+ yrs · Go, React, TypeScript, REST, SQL",
+    fit: "strong",
+    pitch: "The closest match to your real profile: production Go APIs plus the React screens that consume them, in fintech. Lead with owning features end to end (table → API → UI) and the ~40% latency win.",
+    risks: [
+      "Over-qualified for a 3+ yrs band. Get the salary range in the first call.",
+      "React fundamentals named explicitly (lifecycle, Context, hooks): re-renders, effect cleanup, stale closures.",
+      "TypeScript and Go concurrency depth: both mandatory, both likely live-coded.",
+    ],
+    screenQs: [
+      "You have six years. Why a 3+ years role?",
+      "Are you fine working on-site in Thane five days a week?",
+      "What is the split between your Go and React work today?",
+    ],
+    askThem: [
+      "What is the Go vs React split in a typical sprint?",
+      "Which Go framework and state-management library do you use?",
+      "Who owns deployments and on-call: developers or DevOps?",
+    ],
+  },
+  {
     slug: "emerger-tech-golang",
     company: "Emerger Tech",
     role: "Golang Developer",

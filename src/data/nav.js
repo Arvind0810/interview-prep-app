@@ -50,6 +50,7 @@ export const NAV = [
     { href: "/leetcode", label: "LeetCode", icon: Puzzle },
   ]},
   { group: "Companies", items: [
+    { href: "/organizations/golang-react-fullstack-thane", label: "Go + React (Thane)", icon: Building2 },
     { href: "/organizations/emerger-tech-golang", label: "Emerger Tech", icon: Building2 },
     { href: "/organizations/icici-lombard", label: "ICICI Lombard", icon: Building2 },
     { href: "/organizations/virtusa-devops-golang", label: "Virtusa", icon: Building2 },
