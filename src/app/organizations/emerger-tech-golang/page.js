@@ -1,3 +1,4 @@
+import CompanyBrief from "@/components/CompanyBrief";
 import { Card, Pill } from "@/components/Card";
 
 export const metadata = { title: "Emerger Tech — Golang Developer | Interview Prep" };
@@ -26,6 +27,7 @@ export default function EmergerTechGolangPage() {
   return (
     <>
       <h1>Emerger Tech: Golang Developer</h1>
+      <CompanyBrief slug="emerger-tech-golang" />
       <p>
         <strong>Client:</strong> Emerger Tech &nbsp;·&nbsp; <strong>Payroll:</strong> TalentCafe
         Solutions &nbsp;·&nbsp; <strong>Mode:</strong> Hybrid, Chennai<br />

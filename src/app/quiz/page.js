@@ -1,6 +1,22 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { ArrowLeft, ArrowRight, Atom, Boxes, Cpu, Database, Landmark, Network, PlugZap, Settings2, Trophy, Zap } from "lucide-react";
 import { QUIZZES } from "@/data/quizzes";
+import { Badge, Button, PageHeader, ProgressBar, ProgressRing } from "@/components/ui";
+
+const QUIZ_ICONS = {
+  "go-basics": Cpu,
+  "go-advanced": Settings2,
+  postgres: Database,
+  "redis-cache": Zap,
+  "system-design": Network,
+  "nextjs-react": Atom,
+  "apis-microservices": PlugZap,
+  "fintech-domain": Landmark,
+  "rewards-platform": Boxes,
+};
+const PASS_PCT = 80;
+const OK_PCT = 60;
 
 const ROUND_SIZE = 15;
 
@@ -94,31 +110,33 @@ export default function QuizPage() {
   if (!activeId) {
     return (
       <>
-        <h1>Skill Test — Interactive Quizzes</h1>
-        <p>
-          Each attempt draws a fresh random set of {ROUND_SIZE} questions from the topic pool, with the answer options
-          shuffled too — so retrying covers new ground instead of rewarding memorised positions. Scores are saved
-          locally so you can track improvement over time.
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
-          {Object.entries(QUIZZES).map(([id, quiz]) => (
-            <div key={id} className="bg-panel border border-border rounded-xl p-5 text-center">
-              <div className="text-4xl">{quiz.emoji}</div>
-              <h3 className="text-violet-400 my-2 text-base font-semibold">{quiz.title}</h3>
-              <p className="text-xs text-slate-400 m-0">{quiz.desc}</p>
-              <p className="text-xs text-slate-400 mt-2">
-                {roundSizeFor(quiz)} random of {quiz.questions.length}
-                {stats[id] ? ` • Best: ${stats[id].best}%` : ""}
-                {stats[id]?.attempts ? ` • ${stats[id].attempts} ${stats[id].attempts === 1 ? "attempt" : "attempts"}` : ""}
-              </p>
-              <button
-                onClick={() => start(id)}
-                className="mt-3 px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 text-slate-900 font-semibold rounded-md text-sm"
-              >
-                Start
-              </button>
-            </div>
-          ))}
+        <PageHeader
+          eyebrow="Practice"
+          title="Skill Tests"
+          description={`Each attempt draws ${ROUND_SIZE} random questions from the topic pool, with the options shuffled too, so retrying covers new ground instead of rewarding memorised positions. Best scores feed your dashboard.`}
+        />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {Object.entries(QUIZZES).map(([id, quiz]) => {
+            const Icon = QUIZ_ICONS[id] || Trophy;
+            const best = stats[id]?.best;
+            return (
+              <div key={id} className="flex flex-col rounded-2xl border border-border bg-panel p-5 shadow-card">
+                <div className="flex items-start justify-between gap-3">
+                  <span className="grid h-11 w-11 place-items-center rounded-xl bg-accent2/10 text-accent2"><Icon size={22} /></span>
+                  {best != null ? <ProgressRing value={best / 100} size={48} /> : <Badge>Not taken</Badge>}
+                </div>
+                <div className="mt-4 font-semibold text-fg">{quiz.title}</div>
+                <div className="mt-0.5 flex-1 text-sm text-muted">{quiz.desc}</div>
+                <div className="mt-3 text-xs text-subtle">
+                  {roundSizeFor(quiz)} of {quiz.questions.length} questions
+                  {stats[id]?.attempts ? ` · ${stats[id].attempts} ${stats[id].attempts === 1 ? "attempt" : "attempts"}` : ""}
+                </div>
+                <Button onClick={() => start(id)} variant={best != null ? "secondary" : "primary"} className="mt-4 w-full">
+                  {best != null ? "Retake" : "Start"} <ArrowRight size={16} />
+                </Button>
+              </div>
+            );
+          })}
         </div>
       </>
     );
@@ -130,12 +148,17 @@ export default function QuizPage() {
 
   if (idx >= round.length) {
     const pct = Math.round((score / round.length) * 100);
-    const verdict = pct >= 80 ? "🎉 Great job!" : pct >= 60 ? "👍 Solid — review the misses below" : "📚 Review the materials section and retry";
+    const verdict = pct >= PASS_PCT ? "Great job. You're interview-ready on this topic." : pct >= OK_PCT ? "Solid. Review the misses below." : "Review the lesson for this topic, then retry.";
     return (
       <>
-        <h1>{quiz.emoji} {quiz.title} — Result</h1>
-        <p className="text-2xl text-accent">{score} / {round.length} ({pct}%)</p>
-        <p>{verdict}</p>
+        <PageHeader eyebrow="Result" title={quiz.title} />
+        <div className="flex items-center gap-5 rounded-2xl border border-border bg-panel p-5 shadow-card">
+          <ProgressRing value={pct / 100} size={72} stroke={7} />
+          <div>
+            <div className="text-2xl font-bold text-fg tabular-nums">{score} / {round.length}</div>
+            <div className="text-muted">{verdict}</div>
+          </div>
+        </div>
         <h3>Review</h3>
         {round.map((q, i) => {
           const ans = answers[i];
@@ -152,8 +175,8 @@ export default function QuizPage() {
           );
         })}
         <div className="flex flex-wrap gap-3 items-center mt-4">
-          <button onClick={() => start(activeId)} className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 text-slate-900 font-semibold rounded-md">New set of {roundSizeFor(quiz)} →</button>
-          <button onClick={back} className="px-4 py-2 border border-border text-slate-200 rounded-md">Pick another quiz</button>
+          <Button onClick={() => start(activeId)}>New set of {roundSizeFor(quiz)} <ArrowRight size={16} /></Button>
+          <Button variant="secondary" onClick={back}>Pick another quiz</Button>
           <span className="text-xs text-slate-500">Drawn from a pool of {quiz.questions.length}.</span>
         </div>
       </>
@@ -168,15 +191,16 @@ export default function QuizPage() {
 
   return (
     <>
-      <h1>{quiz.emoji} {quiz.title}</h1>
-      <div className="bg-panel border border-border rounded-xl p-5 my-3">
-        <div className="h-2 bg-panel2 rounded overflow-hidden my-2">
-          <div className="h-full bg-gradient-to-r from-cyan-500 to-violet-500 transition-all duration-300" style={{ width: `${progress}%` }} />
+      <PageHeader eyebrow="Skill test" title={quiz.title} />
+      <div className="mx-auto max-w-3xl rounded-2xl border border-border bg-panel p-5 shadow-card md:p-7">
+        <div className="mb-2 flex justify-between text-sm text-muted">
+          <span>Question {idx + 1} of {round.length}</span>
+          <span>{score} correct</span>
         </div>
-        <p className="text-slate-400 text-sm">Question {idx + 1} of {round.length} • random set from {quiz.questions.length}</p>
-        <h3 className="text-slate-100 mt-0 text-lg font-semibold">{q.q}</h3>
+        <ProgressBar value={progress / 100} />
+        <h3 className="!mt-5 text-lg font-semibold !text-fg">{q.q}</h3>
         {q.o.map((opt, i) => {
-          let cls = "bg-panel2 border-border hover:border-accent";
+          let cls = "bg-panel2 border-border hover:border-accent/60";
           if (answered) {
             if (i === q.c) cls = "bg-emerald-900/50 border-emerald-500";
             else if (i === picked) cls = "bg-red-900/50 border-red-500";
@@ -188,9 +212,10 @@ export default function QuizPage() {
               type="button"
               onClick={() => pick(i)}
               disabled={answered}
-              className={`block w-full text-left px-3 py-2 my-2 rounded-md border transition-all ${cls} ${answered ? "cursor-default" : "cursor-pointer"}`}
+              className={`my-2 flex w-full items-start gap-3 rounded-xl border px-4 py-3 text-left text-fg transition-all ${cls} ${answered ? "cursor-default" : "cursor-pointer"}`}
             >
-              {String.fromCharCode(65 + i)}. {opt}
+              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md border border-border text-xs font-bold text-muted">{String.fromCharCode(65 + i)}</span>
+              <span>{opt}</span>
             </button>
           );
         })}
@@ -205,16 +230,13 @@ export default function QuizPage() {
         )}
       </div>
 
-      <div className="flex flex-wrap gap-3 items-center">
+      <div className="mx-auto mt-4 flex max-w-3xl flex-wrap items-center gap-3">
         {answered && (
-          <button
-            onClick={next}
-            className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 text-slate-900 font-semibold rounded-md"
-          >
-            {isLast ? "See results →" : "Next question →"}
-          </button>
+          <Button onClick={next}>
+            {isLast ? "See results" : "Next question"} <ArrowRight size={16} />
+          </Button>
         )}
-        <button onClick={back} className="px-4 py-2 border border-border text-slate-200 rounded-md text-sm">← Exit quiz</button>
+        <Button variant="ghost" onClick={back}><ArrowLeft size={16} /> Exit quiz</Button>
         {!answered && <span className="text-xs text-slate-500">Pick an answer to see the explanation.</span>}
       </div>
     </>
