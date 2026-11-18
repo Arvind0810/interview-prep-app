@@ -1,122 +1,142 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { CheckCircle2, Image as ImageIcon, Layers, ListFilter, Search, SquareStack } from "lucide-react";
 import { QBANK } from "@/data/questions";
 import { diagramFor } from "@/data/diagrams";
 import Diagram from "@/components/Diagram";
+import Flashcards from "@/components/Flashcards";
+import { KEYS, usePersistentState } from "@/lib/storage";
+import { Badge, Button, Chip, EmptyState, PageHeader, ProgressBar, Tabs, inputClass } from "@/components/ui";
 
-const TOPICS = ["All", "PHP", "Laravel", "Go", "Node", "JS", "SQL", "Redis", "Docker", "API", "Next/React", "SysDesign", "Behavioral", "Fintech"];
-const DIFFS = ["All", "easy", "med", "hard"];
+const PAGE_SIZE = 25;
+const ALL = "All";
+const DIFFS = [ALL, "easy", "med", "hard"];
+const DIFF_TONE = { easy: "good", med: "warn", hard: "bad" };
 
-export default function QBankPage() {
-  const [topic, setTopic] = useState("All");
-  const [diff, setDiff] = useState("All");
+const INDEXED = QBANK.map((q, idx) => ({ ...q, idx }));
+const TOPICS = [...new Set(QBANK.map((q) => q.t))];
+
+function QuestionRow({ q, reviewed, onToggleReviewed }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <details open={open} onToggle={(e) => setOpen(e.currentTarget.open)} className={reviewed ? "!border-good/40" : ""}>
+      <summary className="flex list-none items-start gap-3 [&::-webkit-details-marker]:hidden">
+        {reviewed ? <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-good" /> : <span className="mt-1 h-4 w-4 shrink-0 rounded-full border-2 border-border" />}
+        <span className="min-w-0 flex-1">
+          <span className="font-semibold text-fg">{q.q}</span>
+          <span className="mt-1.5 flex flex-wrap gap-1.5">
+            <Badge tone="accent">{q.t}</Badge>
+            <Badge tone={DIFF_TONE[q.d]}>{q.d}</Badge>
+            {q.dia && <Badge tone="violet"><ImageIcon size={11} /> diagram</Badge>}
+          </span>
+        </span>
+      </summary>
+      {open && (
+        <div className="mt-3 animate-fade-in pl-7">
+          <p className="!mt-0 font-normal">{q.a}</p>
+          {q.dia && <Diagram entry={diagramFor(q.dia)} />}
+          <Button variant={reviewed ? "good" : "secondary"} size="sm" onClick={onToggleReviewed}>
+            <CheckCircle2 size={14} /> {reviewed ? "Reviewed" : "Mark as reviewed"}
+          </Button>
+        </div>
+      )}
+    </details>
+  );
+}
+
+function Browse() {
+  const [topic, setTopic] = useState(ALL);
+  const [diff, setDiff] = useState(ALL);
   const [search, setSearch] = useState("");
-  const [reviewed, setReviewed] = useState(new Set());
-  const [openIds, setOpenIds] = useState(new Set());
   const [diagramsOnly, setDiagramsOnly] = useState(false);
+  const [limit, setLimit] = useState(PAGE_SIZE);
+  const [reviewed, setReviewed] = usePersistentState(KEYS.qReviewed, []);
+  const reviewedSet = useMemo(() => new Set(reviewed), [reviewed]);
 
+  // ⌘K search links here as /qbank?q=…
   useEffect(() => {
-    try {
-      const r = JSON.parse(localStorage.getItem("iprep_qReviewed") || "[]");
-      setReviewed(new Set(r));
-    } catch {}
+    const q = new URLSearchParams(window.location.search).get("q");
+    if (q) setSearch(q);
   }, []);
 
-  const toggleReviewed = (id) => {
-    const next = new Set(reviewed);
-    if (next.has(id)) next.delete(id);
-    else next.add(id);
-    setReviewed(next);
-    localStorage.setItem("iprep_qReviewed", JSON.stringify([...next]));
-  };
+  useEffect(() => setLimit(PAGE_SIZE), [topic, diff, search, diagramsOnly]);
 
-  const list = QBANK.map((q, idx) => ({ ...q, idx })).filter((q) => {
-    if (topic !== "All" && q.t !== topic) return false;
-    if (diff !== "All" && q.d !== diff) return false;
-    if (diagramsOnly && !q.dia) return false;
-    if (search && !(q.q.toLowerCase().includes(search.toLowerCase()) || q.a.toLowerCase().includes(search.toLowerCase()))) return false;
-    return true;
-  });
+  const list = useMemo(() => {
+    const s = search.trim().toLowerCase();
+    return INDEXED.filter((q) =>
+      (topic === ALL || q.t === topic) &&
+      (diff === ALL || q.d === diff) &&
+      (!diagramsOnly || q.dia) &&
+      (!s || q.q.toLowerCase().includes(s) || q.a.toLowerCase().includes(s))
+    );
+  }, [topic, diff, search, diagramsOnly]);
 
-  const onToggle = (idx, isOpen) => {
-    setOpenIds((prev) => {
-      const nextOpen = new Set(prev);
-      if (isOpen) nextOpen.add(idx);
-      else nextOpen.delete(idx);
-      return nextOpen;
-    });
-  };
-
-  const diffColor = (d) => (d === "easy" ? "text-emerald-400" : d === "med" ? "text-amber-400" : "text-red-400");
+  const toggle = (idx) =>
+    setReviewed((prev) => (prev.includes(idx) ? prev.filter((x) => x !== idx) : [...prev, idx]));
 
   return (
     <>
-      <h1>Question Bank ({QBANK.length})</h1>
-      <p>Filter by topic and difficulty. Click a question to expand the answer. Mark as reviewed to track progress.</p>
-
-      <input
-        type="text"
-        placeholder="Search questions..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="w-full px-3 py-2 bg-panel2 border border-border rounded-md text-sm text-slate-200 my-3 focus:outline-none focus:border-accent"
-      />
-
-      <div className="flex flex-wrap gap-2 my-3">
-        {TOPICS.map((t) => (
-          <button
-            key={t}
-            onClick={() => setTopic(t)}
-            className={`px-3 py-1 rounded-full text-xs border ${topic === t ? "bg-accent text-slate-900 border-accent" : "bg-panel border-border text-slate-200"}`}
-          >
-            {t}
-          </button>
-        ))}
-        <span className="text-xs text-slate-400 self-center border-l border-border pl-3 ml-2">Difficulty:</span>
-        {DIFFS.map((d) => (
-          <button
-            key={d}
-            onClick={() => setDiff(d)}
-            className={`px-3 py-1 rounded-full text-xs border ${diff === d ? "bg-accent text-slate-900 border-accent" : "bg-panel border-border text-slate-200"}`}
-          >
-            {d}
-          </button>
-        ))}
-        <button
-          onClick={() => setDiagramsOnly((v) => !v)}
-          className={`px-3 py-1 rounded-full text-xs border ml-2 ${diagramsOnly ? "bg-violet-500 text-slate-900 border-violet-500" : "bg-panel border-border text-slate-200"}`}
-        >
-          ◫ With diagram
-        </button>
+      <div className="sticky top-14 z-20 -mx-4 border-b border-border bg-bg/90 px-4 pb-3 pt-3 backdrop-blur-md md:-mx-8 md:px-8">
+        <div className="relative">
+          <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-subtle" />
+          <input type="search" placeholder="Search questions and answers…" value={search} onChange={(e) => setSearch(e.target.value)} className={`${inputClass} pl-9`} aria-label="Search questions" />
+        </div>
+        <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto">
+          {[ALL, ...TOPICS].map((t) => <Chip key={t} active={topic === t} onClick={() => setTopic(t)}>{t}</Chip>)}
+        </div>
+        <div className="no-scrollbar mt-2 flex items-center gap-2 overflow-x-auto">
+          <ListFilter size={14} className="shrink-0 text-subtle" />
+          {DIFFS.map((d) => <Chip key={d} active={diff === d} onClick={() => setDiff(d)}>{d}</Chip>)}
+          <span className="mx-1 h-4 w-px shrink-0 bg-border" />
+          <Chip active={diagramsOnly} onClick={() => setDiagramsOnly((v) => !v)}><ImageIcon size={12} className="mr-1 inline" />With diagram</Chip>
+        </div>
       </div>
 
-      <p className="text-xs text-slate-400">{list.length} of {QBANK.length} questions shown • {reviewed.size} reviewed</p>
+      <div className="my-4 flex flex-wrap items-center gap-3 text-sm text-muted">
+        <span>{list.length} of {QBANK.length} shown</span>
+        <span className="flex flex-1 items-center gap-2 sm:max-w-xs">
+          <ProgressBar value={reviewed.length / QBANK.length} tone="good" />
+          <span className="shrink-0">{reviewed.length} reviewed</span>
+        </span>
+      </div>
 
       {list.length === 0 ? (
-        <p className="text-slate-400 mt-4">No questions match your filters.</p>
+        <EmptyState icon={Search} title="No questions match">Try a different topic or clear the search.</EmptyState>
       ) : (
-        list.map((q) => (
-          <details key={q.idx} open={reviewed.has(q.idx)} onToggle={(e) => onToggle(q.idx, e.currentTarget.open)}>
-            <summary>
-              <span className="text-[11px] bg-slate-700 px-2 py-0.5 rounded mr-2">{q.t}</span>
-              <span className={`text-[11px] font-bold uppercase mr-2 ${diffColor(q.d)}`}>{q.d}</span>
-              {q.q}
-              {q.dia && <span className="text-[11px] text-violet-400 ml-2" title="Has a diagram">◫</span>}
-            </summary>
-            <p className="mt-2">{q.a}</p>
-            {q.dia && (openIds.has(q.idx) || reviewed.has(q.idx)) && (() => {
-              const diagram = diagramFor(q.dia);
-              return <Diagram entry={diagram} />;
-            })()}
-            <button
-              onClick={() => toggleReviewed(q.idx)}
-              className="mt-2 px-3 py-1 text-sm border border-border rounded text-slate-200 hover:border-accent"
-            >
-              {reviewed.has(q.idx) ? "✓ Reviewed" : "Mark as reviewed"}
-            </button>
-          </details>
-        ))
+        <>
+          {list.slice(0, limit).map((q) => (
+            <QuestionRow key={q.idx} q={q} reviewed={reviewedSet.has(q.idx)} onToggleReviewed={() => toggle(q.idx)} />
+          ))}
+          {limit < list.length && (
+            <div className="mt-4 text-center">
+              <Button variant="secondary" onClick={() => setLimit((n) => n + PAGE_SIZE)}>
+                Show {Math.min(PAGE_SIZE, list.length - limit)} more · {list.length - limit} remaining
+              </Button>
+            </div>
+          )}
+        </>
       )}
+    </>
+  );
+}
+
+export default function QBankPage() {
+  const [tab, setTab] = useState("browse");
+  return (
+    <>
+      <PageHeader
+        eyebrow="Practice"
+        title="Question Bank"
+        description={`${QBANK.length} interview questions across ${TOPICS.length} topics. Browse to read model answers, or drill them as flashcards with spaced repetition.`}
+      />
+      <Tabs
+        value={tab}
+        onChange={setTab}
+        tabs={[{ id: "browse", label: "Browse", icon: Layers }, { id: "cards", label: "Flashcards", icon: SquareStack }]}
+      />
+      <div className="mt-4">
+        {tab === "browse" ? <Browse /> : <Flashcards questions={INDEXED} topics={TOPICS} />}
+      </div>
     </>
   );
 }

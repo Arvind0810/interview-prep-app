@@ -1,6 +1,6 @@
 export function Card({ children, className = "" }) {
   return (
-    <div className={`bg-panel border border-border rounded-xl p-5 my-4 ${className}`}>
+    <div className={`bg-panel border border-border rounded-2xl p-5 my-4 shadow-card [&>:first-child]:mt-0 [&>:last-child]:mb-0 ${className}`}>
       {children}
     </div>
   );
@@ -8,7 +8,7 @@ export function Card({ children, className = "" }) {
 
 export function Stat({ value, label }) {
   return (
-    <div className="bg-panel border border-border rounded-xl p-4 text-center">
+    <div className="bg-panel border border-border rounded-2xl p-4 text-center shadow-card">
       <div className="text-2xl font-bold text-accent">{value}</div>
       <div className="text-[11px] text-slate-400 uppercase tracking-wider mt-1">{label}</div>
     </div>

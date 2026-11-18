@@ -1,9 +1,11 @@
+import CompanyBrief from "@/components/CompanyBrief";
 export const metadata = { title: "ICICI Lombard — Sr. Backend Engineer (Golang)" };
 
 export default function ICICILombardPage() {
   return (
     <>
       <h1>ICICI Lombard: Senior Backend Engineer (Golang)</h1>
+      <CompanyBrief slug="icici-lombard" />
       <p>
         <strong>Domain:</strong> Motor Division (Insurance)<br />
         <strong>Experience:</strong> 5+ Years<br />

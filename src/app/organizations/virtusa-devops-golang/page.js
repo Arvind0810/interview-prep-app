@@ -1,3 +1,4 @@
+import CompanyBrief from "@/components/CompanyBrief";
 import { Card, Pill } from "@/components/Card";
 
 export const metadata = { title: "Virtusa — DevOps Engineer (Golang) | Interview Prep" };
@@ -27,6 +28,7 @@ export default function VirtusaDevOpsPage() {
   return (
     <>
       <h1>Virtusa: DevOps Engineer (Golang)</h1>
+      <CompanyBrief slug="virtusa-devops-golang" />
       <p>
         <strong>Role shape:</strong> DevOps / Platform Engineer with mandatory Golang<br />
         <strong>Stated experience:</strong> 15+ years hands-on<br />

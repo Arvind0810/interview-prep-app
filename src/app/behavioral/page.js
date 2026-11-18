@@ -1,70 +1,79 @@
+import { Card } from "@/components/Card";
+import StoryBank from "@/components/StoryBank";
+import { STORIES, STORY_THEMES } from "@/data/stories";
+
 export const metadata = { title: "Behavioral & STAR — Interview Prep" };
 
 export default function BehavioralPage() {
   return (
     <>
-      <h1>Behavioral &amp; STAR Stories</h1>
-      <p>Behavioral interviews assess your judgment, ability to work with others, and how you handle failure. Companies (especially FAANG) use these rounds to see if you align with their core values (like Amazon's Leadership Principles).</p>
+      <h1>Round 4 · Hiring Manager &amp; Behavioral</h1>
+      <p>
+        The hiring manager is deciding one thing: <i>would I trust this person with a real problem
+        on my team?</i> Generic answers can&apos;t show that. Specific ones can, with a real system,
+        a real decision, a real number and a real mistake. Below are {STORIES.length} stories drawn
+        from your own work.
+      </p>
 
-      {/* ────────── THE STAR METHOD ────────── */}
-      <h2>The STAR Method</h2>
-      <p>Every behavioral answer should follow this structure. Keep the <i>Situation</i> and <i>Task</i> brief (20%). Spend the most time on your <i>Action</i> (60%) and conclude with a measurable <i>Result</i> (20%).</p>
+      <Card className="border-amber-700">
+        <h3 className="m-0 text-amber-400">Before you use any story</h3>
+        <ul>
+          <li>
+            Every <code>[bracket]</code> is a fact only you can supply: a number, a date, a query
+            name. Fill it in or cut the sentence. <b>Never replace a bracket with a number you
+            can&apos;t defend after three follow-ups.</b>
+          </li>
+          <li>The HR community ledger story is told as a <b>contributor</b>. Keep it that way.</li>
+          <li>The failure story is a template. It only works if it&apos;s real, so you have to write it yourself.</li>
+        </ul>
+      </Card>
+
+      <h2>The STAR shape, with timing</h2>
+      <p>
+        Aim for about 2 minutes. <b>Situation + Task: 20%</b> (two sentences, no backstory).{" "}
+        <b>Action: 60%</b> (what <i>you</i> did, using &quot;I&quot;, including the decision you
+        rejected). <b>Result: 20%</b> (a number if you have one, plus what you learned). Then stop
+        and let them pick the follow-up.
+      </p>
+
+      <h2>Story bank</h2>
+      <p className="text-sm text-slate-400">
+        Coverage: {STORY_THEMES.length} themes. Most behavioral questions map onto one of them, so
+        filter by the theme of the question you&apos;re practising.
+      </p>
+      <StoryBank />
+
+      <h2>Map the question to the story</h2>
+      <table>
+        <thead><tr><th>If they ask…</th><th>Reach for</th></tr></thead>
+        <tbody>
+          <tr><td>Disagreement or pushback with a colleague</td><td>Trust tiers (why not one auth mode), or V3 (why not patch V1)</td></tr>
+          <tr><td>Tight deadline or a late change</td><td>Speaker cards V2</td></tr>
+          <tr><td>Biggest technical achievement</td><td>Latency ~40%</td></tr>
+          <tr><td>Something risky in production</td><td>Encryption backfill</td></tr>
+          <tr><td>Learning fast or an unfamiliar codebase</td><td>HR community ledger (contributor)</td></tr>
+          <tr><td>Ambiguity or bad input</td><td>CSV imports</td></tr>
+          <tr><td>Failure, mistake or feedback</td><td>Your failure story (write it!)</td></tr>
+          <tr><td>Mentoring or leadership</td><td>Gap: you have no prepared story yet. Find one (onboarding someone, a code-review habit, a doc you wrote) before senior loops.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Questions to ask the hiring manager</h2>
       <ul>
-        <li><b>Situation:</b> Set the scene. What was the context?</li>
-        <li><b>Task:</b> What was the goal or problem you needed to solve?</li>
-        <li><b>Action:</b> What did <i>you</i> specifically do? Use "I", not "We". Describe the technical and interpersonal steps.</li>
-        <li><b>Result:</b> What was the outcome? Use numbers if possible (e.g., "saved 10 hours a week", "reduced latency by 40%"). What did you learn?</li>
+        <li>&quot;What&apos;s the biggest technical problem the team is facing this quarter?&quot;</li>
+        <li>&quot;What would a strong first 90 days look like for this role?&quot;</li>
+        <li>&quot;How are architecture decisions made, and who has the final say?&quot;</li>
+        <li>&quot;What happens after a production incident? What did the last post-mortem change?&quot;</li>
+        <li>&quot;What separates the engineers who do really well here from the rest?&quot;</li>
       </ul>
 
-      {/* ────────── CORE THEMES & SCENARIOS ────────── */}
-      <h2>Core Themes to Prepare For</h2>
-      <p>Instead of memorizing answers, prepare 4-5 versatile stories from your career that can be adapted to answer questions across these themes:</p>
-
-      <details><summary>Theme 1: Handling Conflict / Pushback</summary>
-        <p><i>Example Question:</i> "Tell me about a time you disagreed with a colleague on a technical approach."</p>
-        <p><b>What they want to see:</b> Empathy, data-driven decision making, compromise, and the ability to "disagree and commit".</p>
-        <p><b>How to frame it:</b> Talk about a time someone proposed a fast, hacky solution vs your robust but slower solution (or vice versa). Explain how you evaluated the trade-offs (time-to-market vs technical debt), listened to their concerns, built a quick PoC, and reached a consensus.</p>
-      </details>
-
-      <details><summary>Theme 2: Delivering Under Pressure / Missed Deadlines</summary>
-        <p><i>Example Question:</i> "Tell me about a time you realized you were going to miss a deadline."</p>
-        <p><b>What they want to see:</b> Proactive communication, prioritization, and managing expectations.</p>
-        <p><b>How to frame it:</b> Explain the unforeseen blocker. Show that you didn't hide the problem. You alerted stakeholders early, proposed cutting non-critical scope (MVP approach), and delivered the core value on time while scheduling the rest for a fast-follow sprint.</p>
-      </details>
-
-      <details><summary>Theme 3: Owning a Failure / Production Outage</summary>
-        <p><i>Example Question:</i> "Tell me about a time you broke something in production or failed at a task."</p>
-        <p><b>What they want to see:</b> Accountability (no finger-pointing), immediate mitigation, and long-term prevention.</p>
-        <p><b>How to frame it:</b> "I pushed a bad config / dropped a table / caused a memory leak." Detail how you diagnosed it, how quickly you rolled it back, and critically, the <i>post-mortem</i>. What CI/CD check, linter, or alerting did you add to ensure it never happens again?</p>
-      </details>
-
-      <details><summary>Theme 4: Mentorship &amp; Leadership</summary>
-        <p><i>Example Question:</i> "Tell me about a time you helped a teammate level up."</p>
-        <p><b>What they want to see:</b> Patience, knowledge sharing, and raising the team's bar.</p>
-        <p><b>How to frame it:</b> A junior engineer was struggling with a concept (e.g., Goroutines leaking memory). You pair-programmed, walked them through the debugger/profiler, and then wrote a wiki page or gave a lightning talk so the whole team benefited.</p>
-      </details>
-
-      <details><summary>Theme 5: Dealing with Ambiguity</summary>
-        <p><i>Example Question:</i> "Tell me about a time you were given a vague requirement."</p>
-        <p><b>What they want to see:</b> Initiative, product sense, and stakeholder alignment.</p>
-        <p><b>How to frame it:</b> PM asked for "an SEO tool" or "a reporting dashboard." You didn't just build blindly. You interviewed the end-users, drafted a quick PRD/Mockup, got sign-off, and delivered iteratively.</p>
-      </details>
-
-      {/* ────────── QUESTIONS TO ASK THEM ────────── */}
-      <h2>Questions to ASK the Interviewer</h2>
-      <p>Always have questions prepared. It shows engagement and helps you evaluate if you actually want to work there.</p>
+      <h2>Red flags interviewers listen for</h2>
       <ul>
-        <li><i>Technical:</i> "What does the architecture of your primary system look like, and what is the biggest scaling bottleneck you are currently facing?"</li>
-        <li><i>Process:</i> "How does the team balance shipping new features versus paying down technical debt?"</li>
-        <li><i>Culture:</i> "What happens when a production incident occurs? What is the post-mortem process like?"</li>
-        <li><i>Onboarding:</i> "What would a successful first 30/60/90 days look like for someone in this role?"</li>
-      </ul>
-      
-      <h2>Red Flags to Avoid</h2>
-      <ul>
-        <li><b>"We" syndrome:</b> Saying "we built this" makes the interviewer wonder what <i>you</i> actually did. Use "I".</li>
-        <li><b>Trash-talking past employers:</b> Never say your last boss was terrible. Say "I'm looking for a culture with stronger engineering alignment."</li>
-        <li><b>Fake weaknesses:</b> "I work too hard" or "I'm a perfectionist" are cliché. Give a real, minor weakness and show how you compensate for it (e.g., "I sometimes over-engineer solutions, so now I strictly time-box my architecture research").</li>
+        <li><b>&quot;We&quot; for everything.</b> They can&apos;t tell what you did, so they assume it was very little.</li>
+        <li><b>No numbers, or numbers you can&apos;t explain.</b> The second is worse than the first.</li>
+        <li><b>Criticising past employers or teammates.</b> They&apos;ll assume you&apos;ll talk about them the same way.</li>
+        <li><b>Fake weaknesses</b> (&quot;I&apos;m a perfectionist&quot;). Give a real, minor one and say what you do about it.</li>
+        <li><b>Taking credit for a design you didn&apos;t make.</b> One probing question exposes it.</li>
       </ul>
     </>
   );

@@ -1,121 +1,176 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { CheckCircle2, ChevronDown, ChevronsLeft, ChevronsRight, GraduationCap, Search, X } from "lucide-react";
+import { NAV } from "@/data/nav";
+import { KEYS, readJSON, useStoredValue, writeJSON } from "@/lib/storage";
+import { OPEN_NAV, openPalette } from "@/components/shell/events";
 
-const NAV = [
-  { group: "Start Here", items: [
-    { href: "/", label: "Dashboard" },
-    { href: "/intro", label: "Self-Introduction" },
-    { href: "/modules", label: "My 1Finance Modules" },
-    { href: "/hr-community", label: "HR Community Platform (Latest)" },
-    { href: "/roadmap", label: "Study Roadmap" },
-  ]},
-  { group: "Reading Materials", items: [
-    { href: "/golang", label: "Golang & GoFiber" },
-    { href: "/nodejs", label: "Node.js & NestJS" },
-    { href: "/php", label: "PHP Core" },
-    { href: "/wordpress", label: "WordPress" },
-    { href: "/laravel", label: "Laravel" },
-    { href: "/postgresql", label: "PostgreSQL & SQL" },
-    { href: "/redis", label: "Redis & Caching" },
-    { href: "/docker", label: "Docker & DevOps" },
-    { href: "/microservices", label: "Microservices & APIs" },
-    { href: "/nextjs", label: "Next.js & React" },
-    { href: "/sysdesign", label: "System Design" },
-    { href: "/fintech", label: "Fintech Domain" },
-    { href: "/dsa", label: "DSA Refresher" },
-  ]},
-  { group: "Practice", items: [
-    { href: "/qbank", label: "Question Bank (330+)" },
-    { href: "/quiz", label: "Skill Test (Quizzes)" },
-    { href: "/leetcode", label: "LeetCode Challenges" },
-    { href: "/behavioral", label: "Behavioral & STAR" },
-    { href: "/improvement", label: "Improvement Plan" },
-  ]},
-  { group: "Organizations", items: [
-    { href: "/organizations/emerger-tech-golang", label: "Emerger Tech (Golang Dev)" },
-    { href: "/organizations/virtusa-devops-golang", label: "Virtusa (DevOps + Golang)" },
-    { href: "/organizations/icici-lombard", label: "ICICI Lombard (Sr. Backend)" },
-    { href: "/organizations/custom-software-engineer", label: "Custom Software Engineer" },
-    { href: "/organizations/software-engineer-pm", label: "Software Engineer + PM (Fintech)" },
-  ]},
-];
+function NavItem({ item, active, done, collapsed, onNavigate }) {
+  const Icon = item.icon;
+  return (
+    <Link
+      href={item.href}
+      onClick={onNavigate}
+      title={collapsed ? item.label : undefined}
+      aria-current={active ? "page" : undefined}
+      className={`group relative mb-0.5 flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm no-underline transition-colors hover:no-underline ${
+        active ? "bg-accent/10 text-fg font-semibold" : "text-muted hover:bg-panel hover:text-fg"
+      } ${collapsed ? "justify-center" : ""}`}
+    >
+      {active && <span className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r bg-accent" aria-hidden="true" />}
+      {item.step ? (
+        <span className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border text-[10px] font-bold ${active ? "border-accent text-accent" : "border-border text-subtle"}`}>
+          {item.step}
+        </span>
+      ) : (
+        <Icon size={18} className={`shrink-0 ${active ? "text-accent" : ""}`} />
+      )}
+      {!collapsed && <span className="truncate flex-1">{item.label}</span>}
+      {!collapsed && done && <CheckCircle2 size={15} className="shrink-0 text-good" aria-label="Completed" />}
+    </Link>
+  );
+}
+
+function NavGroups({ pathname, collapsed, onNavigate }) {
+  const lessonsDone = useStoredValue(KEYS.lessonsDone, []);
+  const [learnOpen, setLearnOpen] = useState(false);
+
+  return NAV.map((g) => {
+    const containsActive = g.items.some((it) => it.href === pathname);
+    const expanded = !g.collapsible || learnOpen || containsActive || collapsed;
+    const doneCount = g.items.filter((it) => it.lesson && lessonsDone.includes(it.href)).length;
+    const lessonCount = g.items.filter((it) => it.lesson).length;
+
+    return (
+      <div key={g.group} className="mb-2">
+        {collapsed ? (
+          <div className="mx-auto my-2 h-px w-6 bg-border" aria-hidden="true" />
+        ) : g.collapsible ? (
+          <button
+            type="button"
+            onClick={() => setLearnOpen((o) => !o)}
+            aria-expanded={expanded}
+            className="mt-3 mb-1 flex w-full items-center justify-between px-2.5 text-[11px] font-semibold uppercase tracking-wider text-subtle hover:text-fg"
+          >
+            <span>{g.group} · {doneCount}/{lessonCount}</span>
+            <ChevronDown size={14} className={`transition-transform ${expanded ? "rotate-180" : ""}`} />
+          </button>
+        ) : (
+          <div className="mt-3 mb-1 px-2.5 text-[11px] font-semibold uppercase tracking-wider text-subtle">{g.group}</div>
+        )}
+        {expanded && g.items.map((it) => (
+          <NavItem
+            key={it.href + g.group}
+            item={it}
+            active={pathname === it.href}
+            done={it.lesson && lessonsDone.includes(it.href)}
+            collapsed={collapsed}
+            onNavigate={onNavigate}
+          />
+        ))}
+      </div>
+    );
+  });
+}
+
+function Brand({ collapsed }) {
+  return (
+    <Link href="/" className="flex items-center gap-2.5 no-underline hover:no-underline">
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-cyan-500 to-violet-600 text-white shadow-card">
+        <GraduationCap size={20} />
+      </span>
+      {!collapsed && (
+        <span className="leading-tight">
+          <span className="block font-bold text-fg">PrepHub</span>
+          <span className="block text-[11px] text-subtle">Learn · Practise · Get hired</span>
+        </span>
+      )}
+    </Link>
+  );
+}
+
+function SearchButton({ collapsed }) {
+  return (
+    <button
+      type="button"
+      onClick={openPalette}
+      title="Search (⌘K)"
+      className={`mt-4 mb-2 flex h-9 w-full items-center gap-2 rounded-lg border border-border bg-panel px-2.5 text-sm text-subtle hover:border-accent/50 hover:text-fg ${collapsed ? "justify-center" : ""}`}
+    >
+      <Search size={16} />
+      {!collapsed && <span className="flex-1 text-left">Search…</span>}
+      {!collapsed && <kbd className="rounded border border-border px-1.5 text-[10px]">⌘K</kbd>}
+    </button>
+  );
+}
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const [search, setSearch] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    setCollapsed(readJSON(KEYS.sidebarCollapsed, false) === true);
+    const open = () => setMobileOpen(true);
+    window.addEventListener(OPEN_NAV, open);
+    return () => window.removeEventListener(OPEN_NAV, open);
+  }, []);
+
+  useEffect(() => {
+    if (!mobileOpen) return undefined;
+    const onKey = (e) => e.key === "Escape" && setMobileOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mobileOpen]);
+
+  const toggleCollapsed = () => {
+    setCollapsed((c) => {
+      writeJSON(KEYS.sidebarCollapsed, !c);
+      return !c;
+    });
+  };
 
   return (
     <>
-      {/* Mobile Bottom Bar */}
-      <div className="md:hidden bg-panel2 border-t border-border p-4 flex justify-between items-center fixed bottom-0 left-0 right-0 z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-        <div className="font-bold text-lg text-accent truncate pr-4">Interview Prep Hub</div>
-        <button onClick={() => setIsOpen(!isOpen)} className="text-slate-200 focus:outline-none shrink-0 bg-slate-800 p-2 rounded-full">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            {isOpen ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            )}
-          </svg>
-        </button>
-      </div>
-
-      {/* Sidebar Overlay for Mobile */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-30 md:hidden" 
-          onClick={() => setIsOpen(false)} 
-        />
-      )}
-
-      {/* Sidebar Content */}
-      <aside 
-        className={`fixed inset-y-0 left-0 z-40 bg-panel2 border-r border-border p-4 transform transition-transform duration-200 ease-in-out md:relative md:translate-x-0 overflow-y-auto ${isOpen ? "translate-x-0" : "-translate-x-full"} md:flex md:flex-col md:sticky md:top-0 md:h-screen`}
-        style={{ width: 280, minWidth: 280 }}
+      {/* Desktop */}
+      <aside
+        className={`sticky top-0 hidden h-screen shrink-0 flex-col border-r border-border bg-panel2 transition-[width] duration-200 md:flex ${collapsed ? "w-[72px] px-3" : "w-[264px] px-4"}`}
       >
-        <div className="flex justify-between items-start mb-4 md:block">
-          <div>
-            <div className="font-bold text-lg text-accent mb-1 hidden md:block">Interview Prep Hub</div>
-            <div className="text-xs text-slate-400">Full-Stack Engineer (Go + Next.js)</div>
-          </div>
-          <button onClick={() => setIsOpen(false)} className="md:hidden text-slate-400 hover:text-white p-1">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-          </button>
-        </div>
-        
-        <input
-          type="text"
-          placeholder="Search topics..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-3 py-2 bg-[#0f172a] border border-border rounded-md text-sm text-slate-200 mb-3 focus:outline-none focus:border-accent"
-        />
-        <div className="flex-1 overflow-y-auto">
-          {NAV.map((g) => (
-            <div key={g.group}>
-              <div className="text-[11px] uppercase tracking-wider text-slate-500 mt-3 mb-1 px-2">{g.group}</div>
-              {g.items
-                .filter((it) => it.label.toLowerCase().includes(search.toLowerCase()))
-                .map((it) => {
-                  const active = pathname === it.href;
-                  return (
-                    <Link
-                      key={it.href}
-                      href={it.href}
-                      onClick={() => setIsOpen(false)}
-                      className={`block px-3 py-2 rounded-md text-sm mb-0.5 transition-colors ${active ? "bg-gradient-to-r from-cyan-700 to-violet-700 text-white font-semibold" : "text-slate-200 hover:bg-slate-700"}`}
-                    >
-                      {it.label}
-                    </Link>
-                  );
-                })}
-            </div>
-          ))}
-        </div>
+        <div className="pt-5"><Brand collapsed={collapsed} /></div>
+        <SearchButton collapsed={collapsed} />
+        <nav className="no-scrollbar -mx-1 flex-1 overflow-y-auto px-1 pb-4" aria-label="Main">
+          <NavGroups pathname={pathname} collapsed={collapsed} />
+        </nav>
+        <button
+          type="button"
+          onClick={toggleCollapsed}
+          className={`mb-3 flex h-9 items-center gap-2 rounded-lg px-2.5 text-sm text-subtle hover:bg-panel hover:text-fg ${collapsed ? "justify-center" : ""}`}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {collapsed ? <ChevronsRight size={18} /> : <><ChevronsLeft size={18} /> Collapse</>}
+        </button>
       </aside>
+
+      {/* Mobile drawer */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 md:hidden" role="dialog" aria-modal="true" aria-label="Navigation">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
+          <aside className="absolute inset-y-0 left-0 flex w-[84vw] max-w-[300px] animate-fade-in flex-col border-r border-border bg-panel2 px-4 pt-5">
+            <div className="flex items-center justify-between">
+              <Brand collapsed={false} />
+              <button type="button" onClick={() => setMobileOpen(false)} aria-label="Close navigation" className="grid h-9 w-9 place-items-center rounded-lg text-muted hover:bg-panel">
+                <X size={18} />
+              </button>
+            </div>
+            <SearchButton collapsed={false} />
+            <nav className="flex-1 overflow-y-auto pb-6" aria-label="Main">
+              <NavGroups pathname={pathname} collapsed={false} onNavigate={() => setMobileOpen(false)} />
+            </nav>
+          </aside>
+        </div>
+      )}
     </>
   );
 }

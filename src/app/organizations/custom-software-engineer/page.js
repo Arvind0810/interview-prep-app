@@ -1,9 +1,11 @@
+import CompanyBrief from "@/components/CompanyBrief";
 export const metadata = { title: "Custom Software Engineer — Go & Cloud Native" };
 
 export default function CustomSoftwareEngineerPage() {
   return (
     <>
       <h1>Custom Software Engineer (Tax Technology Leader)</h1>
+      <CompanyBrief slug="custom-software-engineer" />
       <p>
         <strong>Domain:</strong> Tax Technology / Cloud Platform<br />
         <strong>Experience:</strong> 8+ Years (3+ in Cloud Native/SaaS)<br />

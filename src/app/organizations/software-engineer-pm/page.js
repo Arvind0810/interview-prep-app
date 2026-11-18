@@ -1,9 +1,11 @@
+import CompanyBrief from "@/components/CompanyBrief";
 export const metadata = { title: "Software Engineer + Technical PM — Capital Markets Fintech" };
 
 export default function SoftwareEngineerPMPage() {
   return (
     <>
       <h1>Software Engineer (+ Technical PM Track) — Capital Formation Fintech</h1>
+      <CompanyBrief slug="software-engineer-pm" />
       <p>
         <strong>Location:</strong> Lower Parel, Mumbai · Full-time<br />
         <strong>Domain:</strong> Capital markets fintech for real estate, infrastructure, social infrastructure &amp; energy<br />
