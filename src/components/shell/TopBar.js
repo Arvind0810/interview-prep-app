@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { ChevronRight, Menu, Search } from "lucide-react";
 import { pageFor } from "@/data/nav";
 import ThemeToggle from "@/components/shell/ThemeToggle";
+import AccountButton from "@/components/shell/AccountButton";
 import { openNav, openPalette } from "@/components/shell/events";
 
 function Breadcrumb({ pathname }) {
@@ -44,6 +45,7 @@ export default function TopBar() {
       <button type="button" onClick={openPalette} aria-label="Search" className="grid h-9 w-9 place-items-center rounded-lg text-muted hover:bg-panel2 hover:text-fg lg:hidden">
         <Search size={18} />
       </button>
+      <AccountButton />
       <ThemeToggle />
     </header>
   );
