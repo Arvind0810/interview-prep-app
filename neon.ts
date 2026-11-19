@@ -2,7 +2,7 @@ import { defineConfig } from "@neon/config/v1";
 
 // Browser origins allowed to open Realtime subscriptions and call the progress Function.
 // Add your deployed origin here, then run `neon deploy --update-existing --env .env.local`.
-const APP_ORIGINS = ["http://localhost:3000"];
+const APP_ORIGINS = ["http://localhost:3000", "https://interview-prep.arvind-sharma.co.in"];
 
 export default defineConfig({
   preview: {
