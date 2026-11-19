@@ -2,23 +2,55 @@ import "server-only";
 import { timingSafeEqual } from "node:crypto";
 import { ApiError, GoogleGenAI } from "@google/genai";
 
-// Server-only Gemini access. The API key never reaches the browser.
-// Defaults are the stable free-tier models listed on Google's models page (Nov 2026);
-// override with env vars if Google renames or retires them.
-export const PRIMARY_MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
-export const FALLBACK_MODEL = process.env.GEMINI_FALLBACK_MODEL || "gemini-3.5-flash-lite";
+// Server-only Gemini access. Credentials never reach the browser.
+// Two providers share the same @google/genai code path:
+//  - "google" (default): Google AI Studio with GEMINI_API_KEY.
+//  - "neon": the Neon AI Gateway's native Gemini endpoint (AI_PROVIDER=neon). It needs
+//    NEON_AI_GATEWAY_BASE_URL/TOKEN (written by `neon deploy`) and AI Gateway credits.
+// Model IDs differ per provider (Google: "gemini-3.8-flash", Neon catalog: "gemini-3-8-flash");
+// override with env vars if either provider renames or retires them.
+const USE_NEON = process.env.AI_PROVIDER === "neon";
+export const PROVIDER_LABEL = USE_NEON ? "Neon AI Gateway" : "Gemini";
+
+export const PRIMARY_MODEL = USE_NEON
+  ? process.env.NEON_AI_MODEL || "gemini-3-8-flash"
+  : process.env.GEMINI_MODEL || "gemini-3.8-flash";
+export const FALLBACK_MODEL = USE_NEON
+  ? process.env.NEON_AI_FALLBACK_MODEL || "gemini-3-5-flash-lite"
+  : process.env.GEMINI_FALLBACK_MODEL || "gemini-3.5-flash-lite";
 
 const HTTP_TOO_MANY = 429;
 const HTTP_NOT_FOUND = 404;
+const HTTP_FORBIDDEN = 403;
 
 let client = null;
 
 export function isConfigured() {
+  if (USE_NEON) return Boolean(process.env.NEON_AI_GATEWAY_BASE_URL && process.env.NEON_AI_GATEWAY_TOKEN);
   return Boolean(process.env.GEMINI_API_KEY);
 }
 
+export function missingConfigMessage() {
+  return USE_NEON
+    ? "NEON_AI_GATEWAY_BASE_URL / NEON_AI_GATEWAY_TOKEN are not set on the server. Run `neon env pull`."
+    : "GEMINI_API_KEY is not set on the server.";
+}
+
+// The gateway wants `Authorization: Bearer` (the SDK's apiKey becomes x-goog-api-key, which it
+// ignores, but the SDK requires a non-empty value) and serves the Gemini API at v1beta.
+function createNeonClient() {
+  return new GoogleGenAI({
+    apiKey: "neon-ai-gateway",
+    httpOptions: {
+      apiVersion: "v1beta",
+      baseUrl: `${process.env.NEON_AI_GATEWAY_BASE_URL}/gemini`,
+      headers: { Authorization: `Bearer ${process.env.NEON_AI_GATEWAY_TOKEN}` },
+    },
+  });
+}
+
 function getClient() {
-  if (!client) client = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  if (!client) client = USE_NEON ? createNeonClient() : new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   return client;
 }
 
@@ -50,6 +82,16 @@ export async function withModelFallback(call) {
 
 // Maps SDK / network errors to a status and a message safe to show the user.
 export function describeError(err) {
+  if (USE_NEON && err instanceof ApiError) {
+    if (err.status === HTTP_FORBIDDEN && /paid_plan_required|credit/i.test(err.message || "")) {
+      return { status: 402, message: "Neon AI Gateway has no credits yet. Add a card and buy AI Gateway credits on the Neon Billing page." };
+    }
+    if (err.status === 401 || err.status === HTTP_FORBIDDEN) {
+      return { status: 502, message: "Neon AI Gateway rejected the credential. Run `neon env pull` to refresh it." };
+    }
+    if (err.status === HTTP_TOO_MANY) return { status: HTTP_TOO_MANY, message: "Neon AI Gateway rate limit reached. Wait a moment and retry." };
+    return { status: 502, message: `Neon AI Gateway error (${err.status}). Try again shortly.` };
+  }
   if (err instanceof ApiError) {
     if (err.status === HTTP_TOO_MANY) {
       return { status: HTTP_TOO_MANY, message: "Gemini free-tier quota reached. Wait a minute and retry. If it persists, the daily limit is used up." };

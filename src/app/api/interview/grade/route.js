@@ -1,4 +1,4 @@
-import { checkAccess, describeError, isConfigured, withModelFallback } from "@/lib/ai/gemini";
+import { checkAccess, describeError, isConfigured, missingConfigMessage, withModelFallback } from "@/lib/ai/gemini";
 import { GRADE_SCHEMA, GRADER_INSTRUCTION } from "@/lib/ai/prompts";
 import { roundLabel } from "@/data/aiOptions";
 import { normaliseGrade, parseSession } from "@/lib/ai/validate";
@@ -17,7 +17,7 @@ function transcriptText(config, messages) {
 
 // Grades a finished transcript and returns JSON that matches GRADE_SCHEMA.
 export async function POST(request) {
-  if (!isConfigured()) return json(503, { error: "GEMINI_API_KEY is not set on the server." });
+  if (!isConfigured()) return json(503, { error: missingConfigMessage() });
   if (!checkAccess(request)) return json(401, { error: "Access code required." });
 
   let body;

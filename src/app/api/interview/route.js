@@ -1,4 +1,4 @@
-import { accessCodeRequired, checkAccess, describeError, isConfigured, withModelFallback } from "@/lib/ai/gemini";
+import { accessCodeRequired, checkAccess, describeError, PROVIDER_LABEL, isConfigured, missingConfigMessage, withModelFallback } from "@/lib/ai/gemini";
 import { interviewerInstruction } from "@/lib/ai/prompts";
 import { parseSession, toContents } from "@/lib/ai/validate";
 
@@ -11,12 +11,12 @@ const json = (status, body) => Response.json(body, { status });
 
 // Lets the UI show setup instructions instead of failing on the first message.
 export function GET() {
-  return json(200, { configured: isConfigured(), accessCodeRequired: accessCodeRequired() });
+  return json(200, { configured: isConfigured(), accessCodeRequired: accessCodeRequired(), provider: PROVIDER_LABEL });
 }
 
 // Streams the interviewer's next turn as plain text.
 export async function POST(request) {
-  if (!isConfigured()) return json(503, { error: "GEMINI_API_KEY is not set on the server." });
+  if (!isConfigured()) return json(503, { error: missingConfigMessage() });
   if (!checkAccess(request)) return json(401, { error: "Access code required." });
 
   let body;

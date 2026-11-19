@@ -70,9 +70,30 @@ export function readJSON(key, fallback) {
   }
 }
 
+// Cloud sync hook: CloudSync registers a sink while a user is signed in, and every local
+// write is forwarded to it. Signed out (no sink), the app stays purely local.
+let syncSink = null;
+
+export function setSyncSink(sink) {
+  syncSink = sink;
+}
+
 export function writeJSON(key, value) {
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    return false;
+  }
+  if (syncSink) syncSink(key, value);
+  return true;
+}
+
+// Applies a value that arrived from the cloud: writes locally and notifies same-tab
+// listeners, but does not echo it back to the sink.
+export function applyRemoteValue(key, value) {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+    window.dispatchEvent(new CustomEvent(STORE_EVENT, { detail: { key } }));
     return true;
   } catch {
     return false;

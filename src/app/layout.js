@@ -4,6 +4,7 @@ import Sidebar from "@/components/Sidebar";
 import TopBar from "@/components/shell/TopBar";
 import MobileTabBar from "@/components/shell/MobileTabBar";
 import CommandPalette from "@/components/shell/CommandPalette";
+import CloudSync from "@/components/CloudSync";
 import PageFrame from "@/components/shell/PageFrame";
 import { THEME_INIT_SCRIPT } from "@/components/shell/ThemeToggle";
 
@@ -33,6 +34,7 @@ export default function RootLayout({ children }) {
         </div>
         <MobileTabBar />
         <CommandPalette />
+        <CloudSync />
       </body>
     </html>
   );
