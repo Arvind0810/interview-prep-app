@@ -4,6 +4,29 @@
 
 export const COMPANIES = [
   {
+    slug: "capgemini-connectivity-golang",
+    company: "Capgemini",
+    role: "Connectivity & Network Engineer (Golang L1)",
+    meta: "L1 technical discussion · 30 min · Microsoft Teams · Fri 20 Nov 2026, 4:00 PM IST · no JD shared",
+    fit: "stretch",
+    pitch: "The round is titled Golang Developer, so lead with 3.5 years of production Go services, then show networking depth through Go: timeouts, retries, connection reuse, TLS and debugging connectivity between services.",
+    risks: [
+      "Title mismatch: 'Connectivity & Network Engineer' vs a 'Golang Developer' round. Confirm the split in the first minutes.",
+      "Classic network engineering (BGP, OSPF, VLANs, device config) isn't your background. Concepts only, said honestly.",
+      "Go net/net/http internals and concurrency are likely live-coded in a short slot.",
+    ],
+    screenQs: [
+      "Walk me through a Go service you built end to end.",
+      "TCP vs UDP, and what happens when you type a URL?",
+      "How do you handle timeouts and retries when calling another service?",
+    ],
+    askThem: [
+      "Is this mainly Go service development or closer to network automation?",
+      "Which client domain does the team serve: telecom, networking or internal platforms?",
+      "What do the Go services talk to: REST/gRPC services, devices or queues?",
+    ],
+  },
+  {
     slug: "golang-react-fullstack-thane",
     company: "BFSI product team (Thane)",
     role: "GoLang & React Full Stack Developer",
